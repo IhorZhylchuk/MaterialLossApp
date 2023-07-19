@@ -1,4 +1,5 @@
 ﻿using MaterialLossApp.Models;
+using MaterialLossApp.Repo;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,20 +7,16 @@ namespace MaterialLossApp.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly SqlRepo _repo;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(SqlRepo repo)
         {
-            _logger = logger;
+            _repo = repo;
         }
 
-        public IActionResult Index()
+        public IActionResult DefaultMenu()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
+            
             return View();
         }
 
