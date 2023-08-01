@@ -8,7 +8,8 @@ namespace MaterialLossApp.Interfaces
     {
         Task<IActionResult> CreateOrderAsync(Item item);
         Task<IEnumerable<Item>> GetAllOrdersAsync();
-        Task<Item> GetOrderByNumAsync(int ordersNumber);
+        Task<Item> GetOrderByIdAsync(int id);
         Task SaveChangesAsync();
+        Task DeleteItemAsync(int id);
     }
 }

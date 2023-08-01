@@ -92,6 +92,21 @@ namespace MaterialLossApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ItemsCount",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemId = table.Column<int>(type: "int", nullable: false),
+                    IngredientId = table.Column<int>(type: "int", nullable: false),
+                    IngredientCount = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemsCount", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Recipes",
                 columns: table => new
                 {
@@ -239,8 +254,8 @@ namespace MaterialLossApp.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "a12be9c5-aa65-4af6-bd97-00bd9344e575", 0, "1cb0dfcc-389c-4202-90ff-3a35a0267f2a", "petro@gmail.com", true, false, null, "petro@gmail.com", "Petro", "AQAAAAIAAYagAAAAEE2K9LVrQbycXUmL5leffSYkDoUWgPF3anm2hmBqtJS6VeLjjBoCHTf1YsFdsN6XDg==", null, false, "", false, "Petro" },
-                    { "a18be9c0-aa65-4af8-bd17-00bd9344e575", 0, "73627745-f227-4e7f-842e-dde62ca5e87a", "sara@gmail.com", true, false, null, "sara@gmail.com", "Sara", "AQAAAAIAAYagAAAAEKkYjJoTXoPSiD1Nb2ZffDNgG+QX2HOwW37tIv++8lTvysvA2EQA84eJd/1PQJpcJg==", null, false, "", false, "Sara" }
+                    { "a12be9c5-aa65-4af6-bd97-00bd9344e575", 0, "f63fdd84-a9a8-48e1-a64f-b3aaaa21caba", "petro@gmail.com", true, false, null, "petro@gmail.com", "Petro", "AQAAAAIAAYagAAAAENymMXBBVvp1mVW4NcABxwbKHKht41Q7zEE+m5r/gjmKeGcl1NCp2APjYiGCYem+bQ==", null, false, "", false, "Petro" },
+                    { "a18be9c0-aa65-4af8-bd17-00bd9344e575", 0, "973460cc-6ec0-422c-9a59-d1f9f864ff93", "sara@gmail.com", true, false, null, "sara@gmail.com", "Sara", "AQAAAAIAAYagAAAAEDD/NBcXXfbcMotWsqLLj72cT9mOyWcnPF6WKVwP+xsGsgUFzjQtN1xL7In70RSebQ==", null, false, "", false, "Sara" }
                 });
 
             migrationBuilder.InsertData(
@@ -389,6 +404,9 @@ namespace MaterialLossApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "Items");
+
+            migrationBuilder.DropTable(
+                name: "ItemsCount");
 
             migrationBuilder.DropTable(
                 name: "Recipes");

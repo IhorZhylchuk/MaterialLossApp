@@ -318,6 +318,28 @@ namespace MaterialLossApp.Migrations
                     b.ToTable("Items");
                 });
 
+            modelBuilder.Entity("MaterialLossApp.Models.ItemsCount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("IngredientCount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ItemsCount");
+                });
+
             modelBuilder.Entity("MaterialLossApp.Models.Recipe", b =>
                 {
                     b.Property<int>("Id")
@@ -689,13 +711,13 @@ namespace MaterialLossApp.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "73627745-f227-4e7f-842e-dde62ca5e87a",
+                            ConcurrencyStamp = "973460cc-6ec0-422c-9a59-d1f9f864ff93",
                             Email = "sara@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "sara@gmail.com",
                             NormalizedUserName = "Sara",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKkYjJoTXoPSiD1Nb2ZffDNgG+QX2HOwW37tIv++8lTvysvA2EQA84eJd/1PQJpcJg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDD/NBcXXfbcMotWsqLLj72cT9mOyWcnPF6WKVwP+xsGsgUFzjQtN1xL7In70RSebQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -705,13 +727,13 @@ namespace MaterialLossApp.Migrations
                         {
                             Id = "a12be9c5-aa65-4af6-bd97-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1cb0dfcc-389c-4202-90ff-3a35a0267f2a",
+                            ConcurrencyStamp = "f63fdd84-a9a8-48e1-a64f-b3aaaa21caba",
                             Email = "petro@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "petro@gmail.com",
                             NormalizedUserName = "Petro",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE2K9LVrQbycXUmL5leffSYkDoUWgPF3anm2hmBqtJS6VeLjjBoCHTf1YsFdsN6XDg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENymMXBBVvp1mVW4NcABxwbKHKht41Q7zEE+m5r/gjmKeGcl1NCp2APjYiGCYem+bQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
