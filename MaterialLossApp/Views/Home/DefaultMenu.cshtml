@@ -36,21 +36,31 @@
     #formElement {
         padding: 5px;
     }
+
+    #fullScreenDialog{
+        padding:50px;
+    }
+
+    .wasteRow{
+        width:14.2%;
+    }
 </style>
 <main style="margin-top: 130px">
     <div class="container" style="width:100%">
         <div class="form-group">
             <a style="margin-bottom: 10px; color: white" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#zlecenie">Dodaj zlecenie</a>
         </div>
-
+        <div class="form-group">
+            <a style="margin-bottom: 10px; color: white" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#waste">Rozliczenia</a>
+        </div>
         <div class="form-group">
             <table id="zlecenia" class="table table-striped table-bordered display" style="width:100%;margin-top:50px;">
                 <thead>
                     <tr>
                         <th style="text-align: center"></th>
-                        <th id="valueBinNumber">Nr. zlecenia</th>
-                        <th id="valueBinStatus">Nazwa produktu</th>
-                        <th id="processName">Ilość (kg)</th>
+                        <th>Nr. zlecenia</th>
+                        <th>Nazwa produktu</th>
+                        <th>Ilość (kg)</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -107,7 +117,8 @@
                 </div>
             </div>
         </div>
-    </div>    <div class="modal fade" id="details" backdrop="static" keyboard="false" tabindex="-1" aria-labelledby="title" aria-hidden="true">
+    </div>    
+    <div class="modal fade" id="details" backdrop="static" keyboard="false" tabindex="-1" aria-labelledby="title" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -140,6 +151,66 @@
                                 <table class="table table-bordered table-hover" id="tableSurowce">
                                     <tbody id="numerMaterialu">
                                     </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="waste" backdrop="static" keyboard="false" tabindex="-1" aria-labelledby="title" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" id="fullScreenDialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="title">Realizacja zlecenia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="Reset($('#numerMaterialu'))" id="closewaste" aria-label="Close"></button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="wasteOrder">
+
+                        <div class="modal-body">
+
+                            <div class="list-group-item">
+                                <div class="d-inline-flex col text-center">
+                                    <label for="ordersList">Zlecenie</label>
+                                    <select id="ordersList" style="margin-left: 20px; width: 200px; border-color: black; text-align-last: center" class="form-select" asp-items="@ViewBag.Orders">
+                                        <option value="-1" id="defaultOptionForProcess">Wybierz z listy</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span>Receptura:</span>
+                                <input class="form-control" readonly id="wasteRecepture" />
+                            </div>
+                            <div class="form-group">
+                                <span>Ilość:</span>
+                                <input id="wasteCount" class="form-control" readonly />
+                            </div>
+                            <div class="form-group">
+                                <span>Ilość zrealizowanego zlecenia:</span>
+                                <input id="wasteTotalCount" class="form-control"/>
+                            </div>
+                           
+                            <div class="form-group" id="surowce">
+                                <span>Zużycie surowców:</span>
+                                <table class="table table-bordered table-hover" id="tableWaste">
+                                    <thead>
+                                        <tr>
+                                            <th>Nr. materialu</th>
+                                            <th>Nazwa surowca</th>
+                                            <th>Ilość (planowane)</th>
+                                            <th>Ilość (po obliczenich)</th>
+                                            <th>Faktyczna ilość</th>
+                                            <th>Straty</th>
+                                            <th>Komentarze</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="wasteIngredients"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -239,7 +310,8 @@
         var countUpdate = document.getElementById('countUpdate');
         var num = 1;
         $(document).ready(function () {
-            $('#zlecenie').modal({ backdrop: 'static', keyboard: false });
+          
+            $('#waste').modal({ backdrop: 'static', keyboard: false });
             $('#details').modal({ backdrop: 'static', keyboard: false });
             $('#closeNewZlecenie').click(function () {
                 document.getElementById('noweZlecenie').reset();
@@ -317,6 +389,79 @@
                     $('#warningCount').text('Prosze sprawdzić ilość!')
                 }
             })
+            document.getElementById("ordersList").addEventListener("change", (event) => {
+                var id = event.target.value;
+                var body = document.getElementById('wasteIngredients');
+                body.innerHTML = "";
+                var tBody = "<tbody id='wasteIngredients'></tbody>";
+                setTimeout(function () {
+                $('#tableWaste').append(tBody);
+                }, 50);
+                $.ajax({
+                    type: 'Get',
+                    url: '/Home/DetailsTest',
+                    data: { 'id': id},
+                    success: function (data) {
+                        $('#wasteOrder').val(data['details']['nrZlecenia']);
+                        $('#wasteRecepture').val(data['details']['recipesName']);
+                        $('#wasteCount').val(data['details']['count']);
+
+                        $.each(data['opakowania'], function (index, value) {
+                            $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick = 'Copy($(this))' > " + data['opakowania'][index]['materialNumber'] + " </td><td class='wasteRow'>" + data['opakowania'][index]['name'] +
+                                "</td><td class='wasteRow'>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td><td class='wasteRow'></td><td><input type='number'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
+                        })
+                        $.each(data['items'], function (index, value) {
+                            if (data['items'][index]['item1'] != 0) {
+                                $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick='Copy($(this))'>" + data['items'][index]['item1'] + "</td><td class='wasteRow'>" + data['items'][index]['item2'] +
+                                    "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow'></td><td class='wasteRow'><input type='number'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
+                            } else {
+                                $('#wasteIngredients').append("<tr><td class='wasteRow'>" + '-' + "</td><td class='wasteRow'>" + data['items'][index]['item2'] + "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow'></td><td class='wasteRow'><input type='number'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
+                            }
+                        })
+                    }
+                })
+            });
+            document.getElementById('wasteTotalCount').addEventListener('keyup', function(event){
+                var count = event.target.value;
+                $.ajax({
+                    type:'Get',
+                    url: '/Home/GetAcctualCount',
+                    data: { 'orderId': $('#wasteOrder').val(), 'count': count},
+                    success: function(data){
+                        alert(JSON.stringify(data))
+                    }
+                })
+            })
+         //   $('#zlecenia').on('change', function () {
+              //  alert("Text");
+                /*
+                var order = $('#zlecenie option:selected').val();
+                $.ajax({
+                    type: 'Get',
+                    url: '/Home/Test/' + order,
+                    success: function (data) {
+                        alert(JSON.stringify(data));
+                        
+                        //$('#details').modal('show');
+                        //$('#detailsNrZlecenia').val(data['details']['nrZlecenia']);
+                        $('#detailsReceptura').val(data['details']['recipesName']);
+                        $('#totalCount').val(data['details']['count']);
+                        $.each(data['opakowania'], function (index, value) {
+                            $('#wasteIngredients').append("<tr><td id='matNumber__" + index + ">" + data['opakowania'][index]['materialNumber'] + "</td><td>" + data['opakowania'][index]['name'] +
+                                "</td><td>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td></tr>");
+                        })
+                        $.each(data['items'], function (index, value) {
+                            if (data['items'][index]['item1'] != 0) {
+                                $('#wasteIngredients').append("<tr><td id='matNumber_" + index + "' onclick='Copy($(this))'>" + data['items'][index]['item1'] + "</td><td>" + data['items'][index]['item2'] +
+                                    "</td><td>" + data['items'][index]['item3'] + ' kg ' + "</td></tr>");
+                            } else {
+                                $('#numerMaterialu').append("<tr><td>" + '-' + "</td><td>" + data['items'][index]['item2'] + "</td><td>" + data['items'][index]['item3'] + ' kg ' + "</td></tr>");
+                            }
+                        })
+                        
+                    }
+                }) */
+          //  }) 
         })
         function Check(id) {
             return $(id + ' option:selected').val() != -1;

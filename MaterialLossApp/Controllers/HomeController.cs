@@ -28,10 +28,12 @@ namespace MaterialLossApp.Controllers
             var opakowanie = new SelectList(_dbContext.Ingredients.Where(i => i.Use == "Container").Select(n => n.Name).ToList());
             var dekel = new SelectList(_dbContext.Ingredients.Where(i => i.Use == "Cap").Select(n => n.Name).ToList());
             var naklejka = new SelectList(_dbContext.Ingredients.Where(i => i.Use == "Label").Select(n => n.Name).ToList());
+            var orders = new SelectList(_dbContext.Items.ToList(), "Id", "NrZlecenia");
             ViewBag.Recipies = recipies;
             ViewBag.Opakowania = opakowanie;
             ViewBag.Dekel = dekel;
             ViewBag.Naklejka = naklejka;
+            ViewBag.Orders = orders;
 
             return View();
         }
@@ -68,7 +70,6 @@ namespace MaterialLossApp.Controllers
             return Json(null);
         }
 
-
         //[Authorize]
         public async Task<JsonResult> DetailsAsync(int id)
         {
@@ -77,6 +78,51 @@ namespace MaterialLossApp.Controllers
                 try
                 {
                     var zlecenie = await _repo.GetOrderByIdAsync(id);
+                    var surowce = _dbContext.Relations.Where(i => i.RecipeId == zlecenie.RecipeId).Select(i => i.IngredientsId).ToList();
+
+
+                    List<Ingredient> opakowaniaList = new List<Ingredient>()
+                    {
+                        _dbContext.Ingredients.Where(n => n.Name == zlecenie.Opakowanie).Select(o => o).First(),
+                        _dbContext.Ingredients.Where(n => n.Name == zlecenie.PokrywaNekrętka).Select(o => o).First(),
+                        _dbContext.Ingredients.Where(n => n.Name == zlecenie.Naklejka).Select(o => o).First()
+                    };
+
+                    List<Tuple<int, string, double>> ingredients = new List<Tuple<int, string, double>>();
+                    List<Tuple<int, string, double>> surowiec = new List<Tuple<int, string, double>>();
+                    foreach (var elem in surowce)
+                    {
+                        var counts = _dbContext.ItemsCount.Where(i => i.IngredientId == elem).Select(i => i.IngredientCount).First();
+                        var ingredient = _dbContext.Ingredients.Where(i => i.Id == elem).Select(i => i).First();
+                        if (elem == 13)
+                        {
+                            surowiec.Add(new Tuple<int, string, double>(ingredient.MaterialNumber, ingredient.Name, counts));
+
+                        }
+                        else
+                        {
+                            ingredients.Add(new Tuple<int, string, double>(ingredient.MaterialNumber, ingredient.Name, counts));
+                        }
+
+                    }
+                    ingredients.Add(surowiec[0]);
+                    return Json(new { items = ingredients, details = zlecenie, opakowania = opakowaniaList });
+                }
+                catch (Exception e)
+                {
+                    e.Message.ToString();
+                }
+            }
+            return Json(null);
+        }
+
+        public async Task<JsonResult> DetailsTest(int id)
+        {
+            if (id != 0)
+            {
+                try
+                {
+                    var zlecenie = await _dbContext.Items.Where(i => i.Id == id).FirstAsync();
                     var surowce = _dbContext.Relations.Where(i => i.RecipeId == zlecenie.RecipeId).Select(i => i.IngredientsId).ToList();
 
 
@@ -160,6 +206,27 @@ namespace MaterialLossApp.Controllers
                 }
             }
             return NotFound();
+        }
+        public async Task<JsonResult> GetAcctualCount(int orderId, int count)
+        {
+            var order = await _dbContext.Items.Where(n => n.NrZlecenia == orderId).FirstAsync();
+           // var receipeId = _dbContext.Recipes.Where(n => n.Name == order.RecipesName).Select(i => i.Id).FirstOrDefault();
+            var capasity = _dbContext.Ingredients.Where(n => n.Name == order.Opakowanie).Select(i => i.Capacity).FirstOrDefault();
+            order.IlośćOpakowań = Convert.ToInt32(count / capasity);
+            order.IlośćNaklejek = order.IlośćOpakowań;
+            order.IlośćPokrywNekrętek = order.IlośćOpakowań;
+
+            var surowce = _dbContext.Relations.Where(i => i.RecipeId == order.RecipeId).Select(i => i).ToList();
+            List<ItemsCount> ingredientsCount = new List<ItemsCount>();
+            foreach (var id in surowce)
+            {
+                var surowiec = new ItemsCount();
+                surowiec.IngredientId = id.IngredientsId;
+                surowiec.ItemId = order.Id;
+                surowiec.IngredientCount = DefaultRecipies.Count(count, id.Amount);
+                ingredientsCount.Add(surowiec);
+            }
+            return Json(new {updatedOrder = order, iCount =  ingredientsCount});
         }
         /*
         public JsonResult GetIngredients()
