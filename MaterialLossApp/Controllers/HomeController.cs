@@ -115,14 +115,13 @@ namespace MaterialLossApp.Controllers
             }
             return Json(null);
         }
-
         public async Task<JsonResult> DetailsTest(int id)
         {
             if (id != 0)
             {
                 try
                 {
-                    var zlecenie = await _dbContext.Items.Where(i => i.Id == id).FirstAsync();
+                    var zlecenie = await _repo.GetOrderByIdAsync(id);
                     var surowce = _dbContext.Relations.Where(i => i.RecipeId == zlecenie.RecipeId).Select(i => i.IngredientsId).ToList();
 
 
@@ -160,7 +159,7 @@ namespace MaterialLossApp.Controllers
             }
             return Json(null);
         }
-
+        
         public async Task<JsonResult> GetItems()
         {
             return Json(await _repo.GetAllOrdersAsync());
@@ -207,83 +206,6 @@ namespace MaterialLossApp.Controllers
             }
             return NotFound();
         }
-        public async Task<JsonResult> GetAcctualCount(int orderId, int count)
-        {
-            var order = await _dbContext.Items.Where(n => n.NrZlecenia == orderId).FirstAsync();
-           // var receipeId = _dbContext.Recipes.Where(n => n.Name == order.RecipesName).Select(i => i.Id).FirstOrDefault();
-            var capasity = _dbContext.Ingredients.Where(n => n.Name == order.Opakowanie).Select(i => i.Capacity).FirstOrDefault();
-            order.IlośćOpakowań = Convert.ToInt32(count / capasity);
-            order.IlośćNaklejek = order.IlośćOpakowań;
-            order.IlośćPokrywNekrętek = order.IlośćOpakowań;
-
-            var surowce = _dbContext.Relations.Where(i => i.RecipeId == order.RecipeId).Select(i => i).ToList();
-            List<ItemsCount> ingredientsCount = new List<ItemsCount>();
-            foreach (var id in surowce)
-            {
-                var surowiec = new ItemsCount();
-                surowiec.IngredientId = id.IngredientsId;
-                surowiec.ItemId = order.Id;
-                surowiec.IngredientCount = DefaultRecipies.Count(count, id.Amount);
-                ingredientsCount.Add(surowiec);
-            }
-            return Json(new {updatedOrder = order, iCount =  ingredientsCount});
-        }
-        /*
-        public JsonResult GetIngredients()
-        {
-            var zlecenie = _dbContext.Items.Select(i => i).FirstOrDefault();
-            try
-            {
-                //var orders = _dbContext.NewOrders.Where(i => i.ItemId == zlecenie.NrZlecenia).Select(n => n.IngredientNumber);
-                var surowce = _dbContext.Relations.Where(i => i.RecipeId == zlecenie.RecipeId).Where(i => i.IngredientsId != 13).Select(i => i.IngredientsId).ToList();
-
-                List<Ingredient> opakowaniaList = new List<Ingredient>()
-                {
-                     _dbContext.Ingredients.Where(n => n.Name == zlecenie.Opakowanie && zlecenie.Contains(n.MaterialNumber)== false).Select(o => o).FirstOrDefault(),
-                     _dbContext.Ingredients.Where(n => n.Name == zlecenie.PokrywaNekrętka && orders.Contains(n.MaterialNumber)== false).Select(o => o).FirstOrDefault(),
-                     _dbContext.Ingredients.Where(n => n.Name == zlecenie.Naklejka && orders.Contains(n.MaterialNumber)== false).Select(o => o).FirstOrDefault()
-
-                };
-
-                List<Tuple<int, string, double>> ingredients = new List<Tuple<int, string, double>>();
-
-                foreach (var elem in surowce)
-                {
-                    var ingredient = _dbContext.Ingredients.Where(i => i.Id == elem && orders.Contains(i.MaterialNumber) == false).Select(i => i).FirstOrDefault();
-                    try
-                    {
-                        var counts = _dbContext.ItemsCount.Where(i => i.IngredientId == ingredient.Id).Select(i => i.IngredientCount).FirstOrDefault();
-                        ingredients.Add(new Tuple<int, string, double>(ingredient.MaterialNumber, ingredient.Name, counts));
-
-                    }
-                    catch (Exception e)
-                    {
-                        e.Message.ToString();
-                    }
-
-                };
-                if (ingredients.Count() != 0)
-                {
-                    return Json(new { details = zlecenie, opakowania = opakowaniaList, items = ingredients, num = 1, onOrders = orders });
-                }
-                else if (opakowaniaList.Where(i => i != null).ToList().Count() != 0)
-                {
-                    return Json(new { details = zlecenie, opakowania = opakowaniaList, items = ingredients, num = 1, onOrders = orders });
-                }
-                else
-                {
-                    return Json(new { details = zlecenie, num = 0 });
-                }
-
-            }
-            catch (Exception e)
-            {
-                e.Message.ToString();
-            }
-            return Json(new { details = zlecenie, num = 0 });
-        }
-        */
-        //[Authorize]
         public async Task<IActionResult> DeleteAsync(int? id)
         {
             if (id != null)

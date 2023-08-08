@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Home Page";
     var opakowania = ViewBag.Opakowania;
+    var orders = ViewBag.Orders as string[];
 
 }
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -231,7 +232,7 @@
                     <form asp-action="EditedOrder" method="Post" id="noweZlecenie">
                         <div class="modal-body">
                             <div class="form-group">
-                                <input hidden asp-for="Id" id="zlecenieId" />
+                                <input hidden asp-for="Id" id="zlecenieId"/>
                                 <input class="form-control" type="number" readonly placeholder="Numer zlecenia" required asp-for="NrZlecenia" min="2000000" max="3000000" id="nrZlecenieUpdate" />
                                 <span id="warning" style="color:red; font-size:small; font-style:normal"></span>
                             </div>
@@ -399,7 +400,7 @@
                 }, 50);
                 $.ajax({
                     type: 'Get',
-                    url: '/Home/DetailsTest',
+                    url: '/Home/Details',
                     data: { 'id': id},
                     success: function (data) {
                         $('#wasteOrder').val(data['details']['nrZlecenia']);
@@ -408,30 +409,70 @@
 
                         $.each(data['opakowania'], function (index, value) {
                             $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick = 'Copy($(this))' > " + data['opakowania'][index]['materialNumber'] + " </td><td class='wasteRow'>" + data['opakowania'][index]['name'] +
-                                "</td><td class='wasteRow'>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td><td class='wasteRow'></td><td><input type='number'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
+                                "</td><td class='wasteRow'>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td><td class='wasteRow actualWastePack' ></td><td><input type='number' onclick='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
                         })
                         $.each(data['items'], function (index, value) {
                             if (data['items'][index]['item1'] != 0) {
                                 $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick='Copy($(this))'>" + data['items'][index]['item1'] + "</td><td class='wasteRow'>" + data['items'][index]['item2'] +
-                                    "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow'></td><td class='wasteRow'><input type='number'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
+                                    "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td><td class='wasteRow actualWaste'></td><td class='wasteRow'><input type='number' onclick='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
                             } else {
-                                $('#wasteIngredients').append("<tr><td class='wasteRow'>" + '-' + "</td><td class='wasteRow'>" + data['items'][index]['item2'] + "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow'></td><td class='wasteRow'><input type='number'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
+                                $('#wasteIngredients').append("<tr><td class='wasteRow'>" + '-' + "</td><td class='wasteRow '>" + data['items'][index]['item2'] + "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow actualWaste'></td><td class='wasteRow'><input type='number' onclick='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
                             }
                         })
                     }
                 })
             });
-            document.getElementById('wasteTotalCount').addEventListener('keyup', function(event){
-                var count = event.target.value;
+            document.getElementById('wasteTotalCount').addEventListener('input', function(event){
+                var countTotal = event.target.value;
+                var id = $('#wasteOrder option:selected').val();
                 $.ajax({
                     type:'Get',
-                    url: '/Home/GetAcctualCount',
-                    data: { 'orderId': $('#wasteOrder').val(), 'count': count},
+                    url: '/Home/Details',
+                  //  url: '/Home/GetAcctualCount',
+                    //data: { 'orderId': $('#wasteOrder').val(), 'count': count},
+                    data: { 'id': id },
                     success: function(data){
-                        alert(JSON.stringify(data))
+                        var n = 0;
+                        var count = [];
+                        var counPack = [];
+                         $.each(data['items'], function (index, value) {
+                            var ingredient = FindPercentage(countTotal, document.getElementById('wasteCount').value, parseFloat(data['items'][index]['item3']));
+                            count.push(ingredient);
+                         })
+                            
+                        $('#tableWaste tbody tr').each(function (tr_idx, tr) {
+                            $(tr).children('td.actualWastePack').each(function (td_idx, td) {
+                                $.each(data['opakowania'], function (index, value) {
+                                    $(td).text(FindPercentage(countTotal, document.getElementById('wasteCount').value, parseFloat(data['details']['ilośćOpakowań'])));
+                                });
+                            })
+                        })
+                        $('#tableWaste tbody tr').each(function () {
+                            $(this).find('td.actualWaste').each(function (index, td) {
+                                $(this).text(count[n]);
+                                n++;
+                            });
+                        });
+                        //alert(count)
+                        //alert(FindPercentage(50,100,8.4));
+                    
+        // alert(count);
+                       // $('#tableWaste tbody tr').each(function (tr_idx, tr) {
+                             //   $(tr).children('td.actualWaste').each(function (td_idx, td) {
+                                 // $.each(data['items'], function (index, value) {
+                              //  $(td).text(data['items'][td_idx]['item3']);
+                                //});
+                          //  })
+                       // })
+                        //alert(JSON.stringify(data['items']));
+                        //alert(JSON.stringify(data))
+                        
                     }
                 })
             })
+
+
+            
          //   $('#zlecenia').on('change', function () {
               //  alert("Text");
                 /*
@@ -463,6 +504,28 @@
                 }) */
           //  }) 
         })
+        function GetValue(input){
+            var result = input.select();
+            const tr = result.parent().parent().index();
+            var result = $('#tableWaste tBody tr').eq(tr).find('td').eq(3).text();
+           // const index = Array.prototype.indexOf.call(tr.parentNode.children, tr);
+            alert(result);
+         //   $('tr').click(function () {
+              //  var rowIndex = $(this).parent().index();
+               // alert(rowIndex);
+            //});
+            //var index = $(this).closest('#tableWaste tBody tr').index();
+            //var tr = $('#tableWaste tBody').find(this).parent('tr').index();
+            //var tdValues = [];
+
+           // $('#tableWaste tBody').find('tr:eq(0)').find('td').each(function () {
+           // $('#tableWaste tBody').find('tr').eq(0).find('td').each(function () {
+              //  tdValues.push($(this).text());
+            //});
+            //alert($(this).parent('tr').find('td').eq(0).text());
+            //alert(JSON.s $tr);
+            //alert($('td:eq(3)').text())
+        }
         function Check(id) {
             return $(id + ' option:selected').val() != -1;
         }
@@ -530,6 +593,11 @@
                 $('#submitButton').attr('disabled', 'true');
                 $('#warningTextForOrder').text('Prosze dokładnie sprawdzić czy wszystkie opcje są wybrane!');
             }
+        }
+        function FindPercentage(number_1, number_2, number_3){
+            var percent = (number_1 / number_2) * 100;
+            var count = (percent / 100) * number_3;
+            return count;
         }
         function Reset(input) {
             input.empty();
