@@ -233,7 +233,7 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <input hidden asp-for="Id" id="zlecenieId"/>
-                                <input class="form-control" type="number" readonly placeholder="Numer zlecenia" required asp-for="NrZlecenia" min="2000000" max="3000000" id="nrZlecenieUpdate" />
+                                <input class="form-control" type="number" readonly placeholder="Numer zlecenia" on  required asp-for="NrZlecenia" min="2000000" max="3000000" id="nrZlecenieUpdate" />
                                 <span id="warning" style="color:red; font-size:small; font-style:normal"></span>
                             </div>
                             <div class="form-group">
@@ -273,7 +273,6 @@
             </div>
         </div>
     </div>
-
 </main>
 <footer>
     <div class="col text-center">
@@ -409,14 +408,14 @@
 
                         $.each(data['opakowania'], function (index, value) {
                             $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick = 'Copy($(this))' > " + data['opakowania'][index]['materialNumber'] + " </td><td class='wasteRow'>" + data['opakowania'][index]['name'] +
-                                "</td><td class='wasteRow'>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td><td class='wasteRow actualWastePack' ></td><td><input type='number' onclick='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
+                                "</td><td class='wasteRow'>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td><td class='wasteRow actualWastePack' ></td><td><input type='number' oninput='GetValue($(this))'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input/></td></tr>");
                         })
                         $.each(data['items'], function (index, value) {
                             if (data['items'][index]['item1'] != 0) {
                                 $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick='Copy($(this))'>" + data['items'][index]['item1'] + "</td><td class='wasteRow'>" + data['items'][index]['item2'] +
-                                    "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td><td class='wasteRow actualWaste'></td><td class='wasteRow'><input type='number' onclick='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
+                                    "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td><td class='wasteRow actualWaste'></td><td><input type='number' oninput='GetValue($(this))' class='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input/></td></tr>");
                             } else {
-                                $('#wasteIngredients').append("<tr><td class='wasteRow'>" + '-' + "</td><td class='wasteRow '>" + data['items'][index]['item2'] + "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow actualWaste'></td><td class='wasteRow'><input type='number' onclick='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow'></td><td class='wasteRow'><input/></td></tr>");
+                                $('#wasteIngredients').append("<tr><td class='wasteRow'>" + '-' + "</td><td class='wasteRow '>" + data['items'][index]['item2'] + "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow actualWaste'></td><td class='wasteRow'><input type='number' oninput='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input/></td></tr>");
                             }
                         })
                     }
@@ -453,78 +452,26 @@
                                 n++;
                             });
                         });
-                        //alert(count)
-                        //alert(FindPercentage(50,100,8.4));
-                    
-        // alert(count);
-                       // $('#tableWaste tbody tr').each(function (tr_idx, tr) {
-                             //   $(tr).children('td.actualWaste').each(function (td_idx, td) {
-                                 // $.each(data['items'], function (index, value) {
-                              //  $(td).text(data['items'][td_idx]['item3']);
-                                //});
-                          //  })
-                       // })
-                        //alert(JSON.stringify(data['items']));
-                        //alert(JSON.stringify(data))
-                        
                     }
                 })
             })
-
-
-            
-         //   $('#zlecenia').on('change', function () {
-              //  alert("Text");
-                /*
-                var order = $('#zlecenie option:selected').val();
-                $.ajax({
-                    type: 'Get',
-                    url: '/Home/Test/' + order,
-                    success: function (data) {
-                        alert(JSON.stringify(data));
-                        
-                        //$('#details').modal('show');
-                        //$('#detailsNrZlecenia').val(data['details']['nrZlecenia']);
-                        $('#detailsReceptura').val(data['details']['recipesName']);
-                        $('#totalCount').val(data['details']['count']);
-                        $.each(data['opakowania'], function (index, value) {
-                            $('#wasteIngredients').append("<tr><td id='matNumber__" + index + ">" + data['opakowania'][index]['materialNumber'] + "</td><td>" + data['opakowania'][index]['name'] +
-                                "</td><td>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td></tr>");
-                        })
-                        $.each(data['items'], function (index, value) {
-                            if (data['items'][index]['item1'] != 0) {
-                                $('#wasteIngredients').append("<tr><td id='matNumber_" + index + "' onclick='Copy($(this))'>" + data['items'][index]['item1'] + "</td><td>" + data['items'][index]['item2'] +
-                                    "</td><td>" + data['items'][index]['item3'] + ' kg ' + "</td></tr>");
-                            } else {
-                                $('#numerMaterialu').append("<tr><td>" + '-' + "</td><td>" + data['items'][index]['item2'] + "</td><td>" + data['items'][index]['item3'] + ' kg ' + "</td></tr>");
-                            }
-                        })
-                        
-                    }
-                }) */
-          //  }) 
         })
-        function GetValue(input){
-            var result = input.select();
-            const tr = result.parent().parent().index();
-            var result = $('#tableWaste tBody tr').eq(tr).find('td').eq(3).text();
-           // const index = Array.prototype.indexOf.call(tr.parentNode.children, tr);
-            alert(result);
-         //   $('tr').click(function () {
-              //  var rowIndex = $(this).parent().index();
-               // alert(rowIndex);
-            //});
-            //var index = $(this).closest('#tableWaste tBody tr').index();
-            //var tr = $('#tableWaste tBody').find(this).parent('tr').index();
-            //var tdValues = [];
 
-           // $('#tableWaste tBody').find('tr:eq(0)').find('td').each(function () {
-           // $('#tableWaste tBody').find('tr').eq(0).find('td').each(function () {
-              //  tdValues.push($(this).text());
-            //});
-            //alert($(this).parent('tr').find('td').eq(0).text());
-            //alert(JSON.s $tr);
-            //alert($('td:eq(3)').text())
+        function GetValue(input){
+            const tr = input.parent().parent().index();
+            var count = $('#tableWaste tBody tr').eq(tr).find('td').eq(3).text();
+            var value = (100 - ((parseFloat(input.val()) / parseFloat(count)) * 100)).toFixed(2);
+            switch (true){
+                case value < 0:
+                    $('#tableWaste tbody tr').eq(tr).find('td').eq(5).css('color', 'red').text(value + ' %');
+                    break;
+                case value > 0:
+                    $('#tableWaste tbody tr').eq(tr).find('td').eq(5).css('color', 'green').text('+' + value + ' %');
+                    break;
+                case value == 0:
+                    $('#tableWaste tbody tr').eq(tr).find('td').eq(5).text(value);
+                    break;
+            }
         }
         function Check(id) {
             return $(id + ' option:selected').val() != -1;
