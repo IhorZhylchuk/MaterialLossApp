@@ -45,6 +45,9 @@
     .wasteRow{
         width:14.2%;
     }
+    td{
+        text-align:center;
+    }
 </style>
 <main style="margin-top: 130px">
     <div class="container" style="width:100%">
@@ -136,7 +139,7 @@
 
                             <div class="form-group">
                                 <span>Numer zlecenia:</span>
-                                <input class="form-control" readonly id="detailsNrZlecenia" />
+                                <input class="form-control" readonly id="detailsNrZlecenia"/>
                             </div>
                             <div class="form-group">
                                 <span>Receptura:</span>
@@ -408,14 +411,14 @@
 
                         $.each(data['opakowania'], function (index, value) {
                             $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick = 'Copy($(this))' > " + data['opakowania'][index]['materialNumber'] + " </td><td class='wasteRow'>" + data['opakowania'][index]['name'] +
-                                "</td><td class='wasteRow'>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td><td class='wasteRow actualWastePack' ></td><td><input type='number' oninput='GetValue($(this))'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input/></td></tr>");
+                                "</td><td class='wasteRow'>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td><td class='wasteRow actualWastePack' ></td><td><input type='number' id='wasteDefault' oninput='GetValue($(this))'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input id='comment' hidden/></td></tr>");
                         })
                         $.each(data['items'], function (index, value) {
                             if (data['items'][index]['item1'] != 0) {
                                 $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick='Copy($(this))'>" + data['items'][index]['item1'] + "</td><td class='wasteRow'>" + data['items'][index]['item2'] +
-                                    "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td><td class='wasteRow actualWaste'></td><td><input type='number' oninput='GetValue($(this))' class='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input/></td></tr>");
+                                    "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td><td class='wasteRow actualWaste'></td><td><input type='number' oninput='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input id='comment' hidden/></td></tr>");
                             } else {
-                                $('#wasteIngredients').append("<tr><td class='wasteRow'>" + '-' + "</td><td class='wasteRow '>" + data['items'][index]['item2'] + "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow actualWaste'></td><td class='wasteRow'><input type='number' oninput='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input/></td></tr>");
+                                $('#wasteIngredients').append("<tr><td class='wasteRow'>" + '-' + "</td><td class='wasteRow '>" + data['items'][index]['item2'] + "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow actualWaste'></td><td class='wasteRow'><input type='number' oninput='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input id='comment' hidden/></td></tr>");
                             }
                         })
                     }
@@ -427,8 +430,6 @@
                 $.ajax({
                     type:'Get',
                     url: '/Home/Details',
-                  //  url: '/Home/GetAcctualCount',
-                    //data: { 'orderId': $('#wasteOrder').val(), 'count': count},
                     data: { 'id': id },
                     success: function(data){
                         var n = 0;
@@ -436,7 +437,7 @@
                         var counPack = [];
                          $.each(data['items'], function (index, value) {
                             var ingredient = FindPercentage(countTotal, document.getElementById('wasteCount').value, parseFloat(data['items'][index]['item3']));
-                            count.push(ingredient);
+                            count.push(ingredient)
                          })
                             
                         $('#tableWaste tbody tr').each(function (tr_idx, tr) {
@@ -452,25 +453,84 @@
                                 n++;
                             });
                         });
+                        ChangeTAfterDelete(countTotal)
                     }
                 })
             })
         })
+        function ChangeTAfterDelete(input){
+            var $table = $('#tableWaste tbody');
+            var $trElements = $table.find('tr');
 
+            $trElements.each(function () {
+                var count = $(this).find('td').eq(3).text();
+                var inputWaste = $(this).find('td').eq(4).find('input');
+                var waste = $(this).find('td').eq(5);
+                var comment = $(this).find('td').eq(6);
+                if(inputWaste.val() != 0 && input != 0){
+                    var value = (100 - ((parseFloat(inputWaste.val()) / parseFloat(count)) * 100)).toFixed(2);
+                    switch (true) {
+                        case value < 0:
+                           waste.css('color', 'red').text(value + ' %');
+                            if (value < -1) {
+                                comment.removeAttr("hidden");
+                            } else {
+                                comment.attr('hidden', 'true');
+                            }
+                            break;
+                        case value > 0:
+                            waste.css('color', 'green').text('+' + value + ' %');
+                            if (value > 1) {
+                                comment.removeAttr("hidden");
+                            } else {
+                                comment.attr('hidden', 'true');
+                            }
+                            break;
+                        case value == 0:
+                            waste.css('color', 'black').text(value);
+                            comment.attr('hidden', 'true');
+                            break;
+                    }
+                   // waste.text(value);
+                }else{
+                    waste.css('color', 'black').text('');
+                    inputWaste.val('');
+                    comment.attr('hidden', 'true');
+
+                } 
+            });
+        }
         function GetValue(input){
             const tr = input.parent().parent().index();
-            var count = $('#tableWaste tBody tr').eq(tr).find('td').eq(3).text();
+            var count = $('#tableWaste tbody tr').eq(tr).find('td').eq(3).text();
+            var comment = $('#tableWaste tbody tr').eq(tr).find('td').eq(6).find('input');
             var value = (100 - ((parseFloat(input.val()) / parseFloat(count)) * 100)).toFixed(2);
-            switch (true){
-                case value < 0:
-                    $('#tableWaste tbody tr').eq(tr).find('td').eq(5).css('color', 'red').text(value + ' %');
-                    break;
-                case value > 0:
-                    $('#tableWaste tbody tr').eq(tr).find('td').eq(5).css('color', 'green').text('+' + value + ' %');
-                    break;
-                case value == 0:
-                    $('#tableWaste tbody tr').eq(tr).find('td').eq(5).text(value);
-                    break;
+            if(input.val() == ''){
+                $('#tableWaste tbody tr').eq(tr).find('td').eq(5).text('');
+                comment.attr('hidden', 'true');
+            }else{
+                switch (true) {
+                    case value < 0:
+                        $('#tableWaste tbody tr').eq(tr).find('td').eq(5).css('color', 'red').text(value + ' %');
+                        if (value < -1) {
+                            comment.removeAttr("hidden");
+                        } else {
+                            comment.attr('hidden', 'true');
+                        }
+                        break;
+                    case value > 0:
+                        $('#tableWaste tbody tr').eq(tr).find('td').eq(5).css('color', 'green').text('+' + value + ' %');
+                        if (value > 1) {
+                            comment.removeAttr("hidden");
+                        } else {
+                            comment.attr('hidden', 'true');
+                        }
+                        break;
+                    case value == 0:
+                        $('#tableWaste tbody tr').eq(tr).find('td').eq(5).text(value);
+                        comment.attr('hidden', 'true');
+                        break;
+                }
             }
         }
         function Check(id) {
