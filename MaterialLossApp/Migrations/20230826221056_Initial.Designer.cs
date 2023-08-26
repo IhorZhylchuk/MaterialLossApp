@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MaterialLossApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230801123957_Initial")]
+    [Migration("20230826221056_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,6 +24,29 @@ namespace MaterialLossApp.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("MaterialLossApp.Models.Comment", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RealizedOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WasteIngredientId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CommentId");
+
+                    b.ToTable("Comments");
+                });
 
             modelBuilder.Entity("MaterialLossApp.Models.Ingredient", b =>
                 {
@@ -343,6 +366,29 @@ namespace MaterialLossApp.Migrations
                     b.ToTable("ItemsCount");
                 });
 
+            modelBuilder.Entity("MaterialLossApp.Models.RealizedOrders", b =>
+                {
+                    b.Property<int>("RealizedOrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RealizedOrderId"));
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RealizedOrderNumber")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RecipeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RealizedOrderId");
+
+                    b.ToTable("RealizedOrders");
+                });
+
             modelBuilder.Entity("MaterialLossApp.Models.Recipe", b =>
                 {
                     b.Property<int>("Id")
@@ -581,6 +627,44 @@ namespace MaterialLossApp.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MaterialLossApp.Models.WasteIngredients", b =>
+                {
+                    b.Property<int>("WasteIngredientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WasteIngredientId"));
+
+                    b.Property<int>("CommentId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Count")
+                        .HasColumnType("real");
+
+                    b.Property<string>("IngredientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IngredientNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RealizedOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RealizedOrdersRealizedOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Waste")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("WasteIngredientId");
+
+                    b.HasIndex("RealizedOrdersRealizedOrderId");
+
+                    b.ToTable("WasteIngredients");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -714,13 +798,13 @@ namespace MaterialLossApp.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "973460cc-6ec0-422c-9a59-d1f9f864ff93",
+                            ConcurrencyStamp = "7fd44156-aefb-49b3-8b4b-056b1d42907c",
                             Email = "sara@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "sara@gmail.com",
                             NormalizedUserName = "Sara",
-                            PasswordHash = "AQAAAAIAAYagAAAAEDD/NBcXXfbcMotWsqLLj72cT9mOyWcnPF6WKVwP+xsGsgUFzjQtN1xL7In70RSebQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEnl44BHyjcZO2p9SeUdHKBOOWCIS4taR1TKH24avEplB1UoBHXD1Cbi5ekVS498kg==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -730,13 +814,13 @@ namespace MaterialLossApp.Migrations
                         {
                             Id = "a12be9c5-aa65-4af6-bd97-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f63fdd84-a9a8-48e1-a64f-b3aaaa21caba",
+                            ConcurrencyStamp = "6c15a056-3264-4a5a-aa51-1e5c1de171c7",
                             Email = "petro@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "petro@gmail.com",
                             NormalizedUserName = "Petro",
-                            PasswordHash = "AQAAAAIAAYagAAAAENymMXBBVvp1mVW4NcABxwbKHKht41Q7zEE+m5r/gjmKeGcl1NCp2APjYiGCYem+bQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOOJzm+8uRx9zMB+MsR5Y+ocdKGInrmUt61s9iGcMf5tu2kcbX4BQDyR28ggFnK8pA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -837,6 +921,13 @@ namespace MaterialLossApp.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("MaterialLossApp.Models.WasteIngredients", b =>
+                {
+                    b.HasOne("MaterialLossApp.Models.RealizedOrders", null)
+                        .WithMany("WasteIngredients")
+                        .HasForeignKey("RealizedOrdersRealizedOrderId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -886,6 +977,11 @@ namespace MaterialLossApp.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MaterialLossApp.Models.RealizedOrders", b =>
+                {
+                    b.Navigation("WasteIngredients");
                 });
 #pragma warning restore 612, 618
         }

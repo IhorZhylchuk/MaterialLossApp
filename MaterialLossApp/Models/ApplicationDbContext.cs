@@ -12,7 +12,9 @@ namespace MaterialLossApp.Models
         public DbSet<Relation> Relations { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<ItemsCount> ItemsCount { get; set; }
-
+        public DbSet<RealizedOrders> RealizedOrders { get; set; }
+        public DbSet<WasteIngredients> WasteIngredients { get; set; }
+        public DbSet<Comment> Comments { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContext) : base(dbContext)
         {
 

@@ -53,6 +53,21 @@ namespace MaterialLossApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    CommentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    WasteIngredientId = table.Column<int>(type: "int", nullable: false),
+                    RealizedOrderId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.CommentId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Ingredients",
                 columns: table => new
                 {
@@ -104,6 +119,21 @@ namespace MaterialLossApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ItemsCount", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RealizedOrders",
+                columns: table => new
+                {
+                    RealizedOrderId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RealizedOrderNumber = table.Column<int>(type: "int", nullable: false),
+                    RecipeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Count = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RealizedOrders", x => x.RealizedOrderId);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,6 +270,30 @@ namespace MaterialLossApp.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "WasteIngredients",
+                columns: table => new
+                {
+                    WasteIngredientId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RealizedOrderId = table.Column<int>(type: "int", nullable: false),
+                    IngredientNumber = table.Column<int>(type: "int", nullable: false),
+                    IngredientName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Count = table.Column<float>(type: "real", nullable: false),
+                    Waste = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommentId = table.Column<int>(type: "int", nullable: false),
+                    RealizedOrdersRealizedOrderId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WasteIngredients", x => x.WasteIngredientId);
+                    table.ForeignKey(
+                        name: "FK_WasteIngredients_RealizedOrders_RealizedOrdersRealizedOrderId",
+                        column: x => x.RealizedOrdersRealizedOrderId,
+                        principalTable: "RealizedOrders",
+                        principalColumn: "RealizedOrderId");
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
@@ -254,8 +308,8 @@ namespace MaterialLossApp.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "a12be9c5-aa65-4af6-bd97-00bd9344e575", 0, "f63fdd84-a9a8-48e1-a64f-b3aaaa21caba", "petro@gmail.com", true, false, null, "petro@gmail.com", "Petro", "AQAAAAIAAYagAAAAENymMXBBVvp1mVW4NcABxwbKHKht41Q7zEE+m5r/gjmKeGcl1NCp2APjYiGCYem+bQ==", null, false, "", false, "Petro" },
-                    { "a18be9c0-aa65-4af8-bd17-00bd9344e575", 0, "973460cc-6ec0-422c-9a59-d1f9f864ff93", "sara@gmail.com", true, false, null, "sara@gmail.com", "Sara", "AQAAAAIAAYagAAAAEDD/NBcXXfbcMotWsqLLj72cT9mOyWcnPF6WKVwP+xsGsgUFzjQtN1xL7In70RSebQ==", null, false, "", false, "Sara" }
+                    { "a12be9c5-aa65-4af6-bd97-00bd9344e575", 0, "6c15a056-3264-4a5a-aa51-1e5c1de171c7", "petro@gmail.com", true, false, null, "petro@gmail.com", "Petro", "AQAAAAIAAYagAAAAEOOJzm+8uRx9zMB+MsR5Y+ocdKGInrmUt61s9iGcMf5tu2kcbX4BQDyR28ggFnK8pA==", null, false, "", false, "Petro" },
+                    { "a18be9c0-aa65-4af8-bd17-00bd9344e575", 0, "7fd44156-aefb-49b3-8b4b-056b1d42907c", "sara@gmail.com", true, false, null, "sara@gmail.com", "Sara", "AQAAAAIAAYagAAAAEEnl44BHyjcZO2p9SeUdHKBOOWCIS4taR1TKH24avEplB1UoBHXD1Cbi5ekVS498kg==", null, false, "", false, "Sara" }
                 });
 
             migrationBuilder.InsertData(
@@ -379,6 +433,11 @@ namespace MaterialLossApp.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WasteIngredients_RealizedOrdersRealizedOrderId",
+                table: "WasteIngredients",
+                column: "RealizedOrdersRealizedOrderId");
         }
 
         /// <inheritdoc />
@@ -400,6 +459,9 @@ namespace MaterialLossApp.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Comments");
+
+            migrationBuilder.DropTable(
                 name: "Ingredients");
 
             migrationBuilder.DropTable(
@@ -415,10 +477,16 @@ namespace MaterialLossApp.Migrations
                 name: "Relations");
 
             migrationBuilder.DropTable(
+                name: "WasteIngredients");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "RealizedOrders");
         }
     }
 }

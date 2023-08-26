@@ -6,8 +6,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+//using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Web.Helpers;
+using System.Text.Json;
+using Newtonsoft.Json.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MaterialLossApp.Controllers
 {
@@ -299,6 +304,233 @@ namespace MaterialLossApp.Controllers
             return RedirectToAction("DefaultMenu");
         }
 
+        [HttpPost]
+        public async Task<JsonResult> GetValues(string jsonData)
+        {
 
+             if (jsonData != null)
+                {
+                    try
+                    {
+                        var jsonResultData = JsonSerializer.Deserialize<dynamic>(jsonData)!;
+                        var order = Int32.Parse(jsonResultData[0].GetProperty("order").GetString());
+                        var realisedCount = Int32.Parse(jsonResultData[0].GetProperty("realisedCount").GetString());
+                        var recepture = jsonResultData[0].GetProperty("recepture").GetString();
+
+                    /*
+                    var ingredientNumber = Int32.Parse(jsonResultData[0].GetProperty("ingredientNumber").GetString());
+                    var ingredientName = jsonResultData[0].GetProperty("ingredientNumber").GetString();
+                    var count = Int32.Parse(jsonResultData[0].GetProperty("count").GetString());
+                    var actualCount = Int32.Parse(jsonResultData[0].GetProperty("actualCount").GetString());
+                    var waste = jsonResultData[0].GetProperty("waste").GetString();
+                    var comment = jsonResultData[0].GetProperty("comment").GetString();
+                    */
+                        RealizedOrders realizedOrder = new RealizedOrders
+                        {
+                            RealizedOrderNumber = order,
+                            Count = realisedCount,
+                            RecipeName = recepture,
+                        };
+                        await _dbContext.RealizedOrders.AddAsync(realizedOrder);
+                        await _dbContext.SaveChangesAsync();
+
+                        for (var i = 0; i < jsonResultData.GetArrayLength(); i++)
+                        {
+                            WasteIngredients wasteIngredient = new WasteIngredients();
+                            _dbContext.WasteIngredients.Add(wasteIngredient);
+                            _dbContext.SaveChanges();
+                            var ingredientNumber = Int32.Parse(jsonResultData[i].GetProperty("ingredientNumber").GetString());
+                            var ingredientName = jsonResultData[i].GetProperty("ingredientName").GetString();
+                           // var count = Int32.Parse(jsonResultData[i].GetProperty("count").GetString());
+                            var actualCount = Double.Parse(jsonResultData[i].GetProperty("actualCount").GetString());
+                            var waste = jsonResultData[i].GetProperty("waste").GetString();
+                            var comment = jsonResultData[i].GetProperty("comment").GetString();
+
+                            Comment commentWaste = new Comment
+                            {
+                                Description = comment,
+                                //IngredientId = wasteIngredient,
+                                WasteIngredientId = wasteIngredient.WasteIngredientId
+                            };
+                            await _dbContext.Comments.AddAsync(commentWaste);
+                            await _dbContext.SaveChangesAsync();
+                            wasteIngredient.RealizedOrderId = realizedOrder.RealizedOrderId;
+                            wasteIngredient.CommentId = commentWaste.CommentId;
+                            wasteIngredient.Count = actualCount;
+                            wasteIngredient.IngredientName = ingredientName;
+                            wasteIngredient.IngredientNumber = ingredientNumber;
+                            wasteIngredient.Waste = waste;
+
+
+                            _dbContext.WasteIngredients.Update(wasteIngredient);
+                            _dbContext.Comments.Update(commentWaste);
+                            await _dbContext.SaveChangesAsync();
+
+                        }
+                        return Json(new { message = "Success" }); 
+
+                     //return Json(jsonData);
+                }
+                    catch(Exception e)
+                    {
+                        return Json(new {message = "An Error occured" + e.Message.ToString()});
+                    }
+
+                }
+                return Json(null);
+               
+            /*
+   try
+   {
+       dynamic jsonResultData = JsonConvert.DeserializeObject(jsonData)!;
+       var order =Int32.Parse(jsonResultData.order);
+       var realisedCount = Int32.Parse(jsonResultData.realisedCount);
+       var recepture = jsonResultData.recepture;
+
+       RealizedOrders realizedOrder = new RealizedOrders
+       {
+           RealizedOrderNumber = order,
+           Count = realisedCount,
+           RecipeName = recepture,
+       };
+       _dbContext.RealizedOrders.Add(realizedOrder);
+       _dbContext.SaveChanges();
+       for (var i = 0; i < jsonResultData.Count; i++)
+       {
+           WasteIngredients wasteIngredient = new WasteIngredients();
+
+           var ingredientNumber = Int32.Parse(jsonResultData[i].ingredientNumber);
+           var ingredientName = jsonResultData[i].ingredientName;
+           var count = Int32.Parse(jsonResultData[i].count);
+           var actualCount = Int32.Parse(jsonResultData[i].actualCount);
+           var waste = jsonResultData[i].waste;
+           var comment = jsonResultData[i].comment;
+
+           Comment commentWaste = new Comment
+           {
+               Description = comment,
+               Ingredient = wasteIngredient,
+               WasteIngredientId = wasteIngredient.WasteIngredientId
+           };
+
+           wasteIngredient.RealizedOrder = realizedOrder;
+           wasteIngredient.Comment = commentWaste;
+           wasteIngredient.CommentId = commentWaste.CommentId;
+           wasteIngredient.Count = count;
+           wasteIngredient.IngredientName = ingredientName;
+           wasteIngredient.IngredientNumber = ingredientNumber;
+           wasteIngredient.Waste = waste;
+
+
+           _dbContext.WasteIngredients.Add(wasteIngredient);
+           _dbContext.Comments.Add(commentWaste);
+           _dbContext.SaveChanges();
+
+       }
+       return Json(new { message = "Success" });
+   }
+   catch (Exception e) {
+       return Json(new { message = e.Message.ToString()});
+
+   }
+   */
+
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> TestGet(string jsonData)
+        {
+            if(jsonData != null)
+            {
+                try
+                {
+                    var jsonResultData = JsonSerializer.Deserialize<dynamic>(jsonData)!;
+                    var order = Int32.Parse(jsonResultData[0].GetProperty("order").GetString());
+                    var realisedCount = Int32.Parse(jsonResultData[0].GetProperty("realisedCount").GetString());
+                    var recepture = jsonResultData[0].GetProperty("recepture").GetString();
+
+                    
+                   // var ingredientNumber = Int32.Parse(jsonResultData[0].GetProperty("ingredientNumber").GetString());
+                   // var ingredientName = jsonResultData[0].GetProperty("ingredientNumber").GetString();
+                  //  var count = Int32.Parse(jsonResultData[0].GetProperty("count").GetString());
+                   // var actualCount = Int32.Parse(jsonResultData[0].GetProperty("actualCount").GetString());
+                    //var waste = jsonResultData[0].GetProperty("waste").GetString();
+                    //var comment = jsonResultData[0].GetProperty("comment").GetString();
+                    
+
+                      RealizedOrders realizedOrder = new RealizedOrders
+                      {
+                         RealizedOrderNumber = order,
+                        Count = realisedCount,
+                          RecipeName = recepture,
+                      };
+
+                   // WasteIngredients wasteIngredient = new WasteIngredients();
+                   // wasteIngredient.RealizedOrderId = realizedOrder.RealizedOrderId;
+                    //wasteIngredient.CommentId = commentWaste.CommentId;
+                   // wasteIngredient.Count = count;
+                  //  wasteIngredient.IngredientName = ingredientName;
+                    //wasteIngredient.IngredientNumber = ingredientNumber;
+                  //  wasteIngredient.Waste = waste;
+
+                     await _dbContext.RealizedOrders.AddAsync(realizedOrder);
+                    // await _dbContext.WasteIngredients.AddAsync(wasteIngredient);
+                     await _dbContext.SaveChangesAsync();
+
+                      for (var i = 0; i < jsonResultData.GetArrayLength(); i++)
+                      {
+                          WasteIngredients wasteIngredient = new WasteIngredients();
+                          await _dbContext.WasteIngredients.AddAsync(wasteIngredient);
+                          await _dbContext.SaveChangesAsync();
+                          var ingredientName = jsonResultData[i].GetProperty("ingredientName").GetString();
+                          var ingredientNumber = new object();
+                        if (ingredientName == "Woda")
+                        {
+                            ingredientNumber = 0;
+                        }
+                        else
+                        {
+                            ingredientNumber = Int32.Parse(jsonResultData[i].GetProperty("ingredientNumber").GetString());
+                        }
+                        //var count = Int32.Parse(jsonResultData[i].GetProperty("count").GetString());
+                          var actualCount = float.Parse(jsonResultData[i].GetProperty("actualCount").GetString());
+                          var waste = jsonResultData[i].GetProperty("waste").GetString();
+                          var comment = jsonResultData[i].GetProperty("comment").GetString();
+
+
+
+                          Comment commentWaste = new Comment
+                          {
+                              Description = comment,
+                              WasteIngredientId = wasteIngredient.WasteIngredientId
+                          };
+                          await _dbContext.Comments.AddAsync(commentWaste);
+                          await _dbContext.SaveChangesAsync();
+                          wasteIngredient.RealizedOrderId = realizedOrder.RealizedOrderId;
+                          wasteIngredient.CommentId = commentWaste.CommentId;
+                          wasteIngredient.Count = actualCount;
+                          wasteIngredient.IngredientName = ingredientName;
+                          wasteIngredient.IngredientNumber = 0;
+                          wasteIngredient.IngredientNumber = (int)ingredientNumber;
+                          wasteIngredient.Waste = waste;
+
+
+                        _dbContext.WasteIngredients.Update(wasteIngredient);
+                        _dbContext.Comments.Update(commentWaste);
+                        await _dbContext.SaveChangesAsync();
+
+                      } 
+                    //return Json(new { jsonResultData });
+                    return Json(new {message = "Success"});
+                }
+                catch (Exception e)
+                {
+                    return Json(e.Message.ToString());
+                }
+            }
+            return Json(null);
+        }
+
+        //  public async Task<IActionResult> WasteCountingAsync([FromBody] )
     }
 }
