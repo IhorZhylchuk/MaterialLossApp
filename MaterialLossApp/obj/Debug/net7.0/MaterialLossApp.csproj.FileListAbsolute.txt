@@ -9,6 +9,11 @@ C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Mate
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Azure.Core.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Azure.Identity.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Humanizer.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.Web.Razor.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.Web.Helpers.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.Web.WebPages.Deployment.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.Web.WebPages.Razor.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.Web.WebPages.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
@@ -32,8 +37,13 @@ C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Micr
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Microsoft.SqlServer.Server.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Microsoft.Web.Infrastructure.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Mono.TextTemplating.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Syncfusion.Compression.Portable.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Syncfusion.Licensing.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Syncfusion.Pdf.Portable.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.CodeDom.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.Drawing.Common.dll
@@ -79,3 +89,4 @@ C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\obj\Debug\net7.0\refi
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\obj\Debug\net7.0\MaterialLossApp.pdb
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\obj\Debug\net7.0\MaterialLossApp.genruntimeconfig.cache
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\obj\Debug\net7.0\ref\MaterialLossApp.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\libman.json

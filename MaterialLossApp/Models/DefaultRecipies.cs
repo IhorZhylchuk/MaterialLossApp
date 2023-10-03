@@ -162,5 +162,60 @@ namespace MaterialLossApp.Models
         {
             return Math.Round((totalCount / 1000) * item, 2);
         }
+        public static string ReplaceChar(string a)
+        {
+            switch (a)
+            {
+                case "Ś":
+                    return "S";
+                case "ś":
+                    return "s";
+                case "ą":
+                    return "a";
+                case "Ł":
+                    return "Ł";
+                case "ł":
+                    return "l";
+                case "ć":
+                    return "c";
+                case "ę":
+                    return "e";
+                case "ó":
+                    return "o";
+                //default: return a;
+            }
+            return a;
+            
+        }
+        public static string ReturnValue(string value)
+        {
+            string newValue = ""; 
+            for(var i = 0; i < value.Length; i++)
+            {
+                 newValue += ReplaceChar(value[i].ToString());
+            }
+            return newValue;
+        }
+        public static string ReturnBoolResult(dynamic? jsonResultData, string propertyName)
+        {
+            var value = jsonResultData.GetProperty(propertyName).GetBoolean();
+            if (value)
+            {
+                return "OK";
+            }
+            else
+            {
+                return "NOK";
+            }
+        }
+        public static string ReturnComment(dynamic? jsonResultData, string propertyName)
+        {
+            var value = jsonResultData.GetProperty(propertyName).GetString();
+            return value;
+        }
+       // public static string ReplaceInputValue(string inputValue)
+        //{
+
+        //}
     }
 }

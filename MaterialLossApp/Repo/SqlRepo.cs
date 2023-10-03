@@ -15,17 +15,28 @@ namespace MaterialLossApp.Repo
         public async Task<IActionResult> CreateOrderAsync(Item model)
         {
             Item item = model;
-            item.RecipeId = _context.Recipes.Where(n => n.Name == model.RecipesName).Select(i => i.Id).FirstOrDefault();
+            item.RecipeId = await _context.Recipes.Where(n => n.Name == model.RecipesName).Select(i => i.Id).FirstAsync();
 
-            var capasity = _context.Ingredients.Where(n => n.Name == model.Opakowanie).Select(i => i.Capacity).FirstOrDefault();
-            item.IlośćOpakowań = Convert.ToInt32(model.Count / capasity);
-            item.IlośćNaklejek = item.IlośćOpakowań;
-            item.IlośćPokrywNekrętek = item.IlośćOpakowań;
+            var capasity = await _context.Ingredients.Where(n => n.Name == model.Opakowanie).Select(i => i.Capacity).FirstAsync();
+            if(capasity != 0)
+            {
+                item.IlośćOpakowań = Convert.ToInt32(model.Count / capasity);
+                item.IlośćNaklejek = item.IlośćOpakowań;
+                item.IlośćPokrywNekrętek = item.IlośćOpakowań;
 
-            await _context.AddAsync(item);
+                await _context.AddAsync(item);
+                await _context.SaveChangesAsync();
 
-            var jsonResponse = new { message = "Success!" };
-            return new JsonResult(jsonResponse);
+                var jsonResponse = new { message = "Success!" };
+                return new JsonResult(jsonResponse);
+            }
+            else
+            {
+
+                var jsonResponse = new { message = "Error occurred!" };
+                return new JsonResult(jsonResponse);
+            }
+
         }
 
         public async Task<IEnumerable<Item>> GetAllOrdersAsync()
@@ -46,6 +57,7 @@ namespace MaterialLossApp.Repo
         {
             var result = await _context.Items.Where(b => b.Id == id).FirstAsync();
             _context.Items.Remove(result);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -5,6 +5,14 @@
       "PackagePath": "staticwebassets\\MaterialLossApp.bundle.scp.css"
     },
     {
+      "Id": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\Font\\Arial.ttf",
+      "PackagePath": "staticwebassets\\Font\\Arial.ttf"
+    },
+    {
+      "Id": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\Font\\Helvetica.ttf",
+      "PackagePath": "staticwebassets\\Font\\Helvetica.ttf"
+    },
+    {
       "Id": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
@@ -243,6 +251,10 @@
     {
       "Id": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\logo.png",
+      "PackagePath": "staticwebassets\\logo.png"
     },
     {
       "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.MaterialLossApp.Microsoft.AspNetCore.StaticWebAssets.props",
