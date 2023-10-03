@@ -42,18 +42,45 @@
         padding: 5px;
     }
 
-    #fullScreenDialog{
-        padding:50px;
+    #fullScreenDialog {
+        padding: 50px;
     }
 
-    .wasteRow{
-        width:14.2%;
+    .wasteRow {
+        width: 14.2%;
     }
-    td{
-        text-align:center;
+
+    td, th {
+        text-align: center !important;
     }
+
+    .color3 {
+        background-color: #ff0000; /* red */
+    }
+
+    .color2 {
+        background-color: green; /* green */
+    }
+
+    .color1 {
+        background-color: grey;
+    }
+
+    .comment {
+        margin-top: 10px;
+    }
+
+    .spanDecor {
+        font-weight: bolder;
+    }
+
+    .inputQA {
+        width: 100px !important;
+    }
+
 </style>
 <main style="margin-top: 130px">
+    <div id="liveAlertPlaceholder"></div>
     <div class="container" style="width:100%">
         <div class="form-group">
             <a style="margin-bottom: 10px; color: white" class="btn btn-primary" id="nZlecenie" data-toggle="modal" data-bs-target="#zlecenie">Dodaj zlecenie</a>
@@ -83,7 +110,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="title">Nowe zlecenie</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeNewZlecenie" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="ReloadPage()" id="closeNewZlecenie" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form asp-action="NoweZlecenie" method="Post" id="noweZlecenie">
@@ -128,13 +155,13 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
     <div class="modal fade" id="details" backdrop="static" keyboard="false" tabindex="-1" aria-labelledby="title" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="title">Szczegóły zlecenia</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"  id="closeZlecenie" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeZlecenie" onclick="ReloadPage()" aria-label="Close"></button>
 
                 </div>
 
@@ -146,7 +173,7 @@
 
                             <div class="form-group">
                                 <span>Numer zlecenia:</span>
-                                <input class="form-control" readonly id="detailsNrZlecenia"/>
+                                <input class="form-control" readonly id="detailsNrZlecenia" />
                             </div>
                             <div class="form-group">
                                 <span>Receptura:</span>
@@ -176,7 +203,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="title">Realizacja zlecenia</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"  id="closewaste" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="ReloadPage()" id="closewaste" aria-label="Close"></button>
 
                 </div>
 
@@ -204,18 +231,18 @@
                             </div>
                             <div class="form-group">
                                 <span>Ilość zrealizowanego zlecenia:</span>
-                                <input id="wasteTotalCount" type="number" min="2000" required class="form-control" disabled/>
+                                <input id="wasteTotalCount" type="number" min="500" required class="form-control" disabled />
                             </div>
-                           
+
                             <div class="form-group" id="surowce">
                                 <span>Zużycie surowców:</span>
                                 <table class="table table-bordered table-hover" id="tableWaste">
                                     <thead>
-                                        <tr>
+                                        <tr id="mainTR">
                                             <th>Nr. materialu</th>
                                             <th>Nazwa surowca</th>
                                             <th>Ilość (planowane)</th>
-                                            <th>Ilość (po obliczenich)</th>
+                                            <th>Ilość (po obliczeniach)</th>
                                             <th>Faktyczna ilość</th>
                                             <th>Straty</th>
                                             <th>Komentarze</th>
@@ -227,7 +254,7 @@
                         </div>
                         <div class="form-group" id="" style="padding:5px">
                             <div class="col text-center">
-                                <button id="submitForWaste" disabled class="btn btn-primary" >Zapisz</button>
+                                <button id="submitForWaste" disabled class="btn btn-primary">Zapisz</button>
                             </div>
                             <span id="warningTextForRaport" style="color:red; font-size:small; font-style:normal"></span>
                         </div>
@@ -242,41 +269,41 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="title">Zmiana zlecenia</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeZlecenieUpdate" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="ReloadPage()" id="closeZlecenieUpdate" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form asp-action="EditedOrder" method="Post" id="noweZlecenie">
+                    <form asp-action="EditedOrder" method="Post" id="updateForm">
                         <div class="modal-body">
-                            <div class="form-group">
-                                <input hidden asp-for="Id" id="zlecenieId"/>
-                                <input class="form-control" type="number" readonly placeholder="Numer zlecenia" on  required asp-for="NrZlecenia" min="2000000" max="3000000" id="nrZlecenieUpdate" />
+                            <div class="form-group" id="formElement">
+                                <input hidden asp-for="Id" id="zlecenieId" />
+                                <input class="form-control" type="number" readonly placeholder="Numer zlecenia" on required asp-for="NrZlecenia" min="2000000" max="3000000" id="nrZlecenieUpdate" />
                                 <span id="warning" style="color:red; font-size:small; font-style:normal"></span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="formElement">
                                 <select id="recipiesUpdate" class="form-select" asp-items="@ViewBag.Recipies" required asp-for="RecipesName">
                                     <option value="-1" id="optionRecipie">Wybierz recepture</option>
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="formElement">
                                 <input id="countUpdate" class="form-control" type="number" placeholder="Iłość (kg)" required min="500" max="3000" asp-for="Count" />
                                 <span id="warningCount" style="color:red; font-size:small; font-style:normal"></span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="formElement">
                                 <select id="opakowanieUpdate" class="form-select" asp-items="@ViewBag.Opakowania" required asp-for="Opakowanie">
                                     <option value="-1" id="optionOpakowanie">Wybierz opakowanie</option>
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="formElement">
                                 <select id="dekelUpdate" class="form-select" asp-items="@ViewBag.Dekel" required asp-for="PokrywaNekrętka">
                                     <option value="-1" id="optionDekel">Pokrywa/Nakrętka</option>
                                 </select>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="formElement">
                                 <select id="etykietaUpdate" class="form-select" asp-items="@ViewBag.Naklejka" required asp-for="Naklejka">
                                     <option value="-1" id="optionEtykieta">Etykieta</option>
                                 </select>
                             </div>
-                            <div class="form-group" id="buttonsSection">
+                            <div class="form-group" id="formElement">
                                 <div class="col text-center">
                                     <input type="submit" value="Save" id="submitButtonUpdate" class="btn btn-primary" />
                                 </div>
@@ -294,62 +321,96 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="title">Raportowanie</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="Reset($('#numerMaterialu'))" id="closeReport" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" id="closeReport" onclick="ReloadPage()" aria-label="Close"></button>
 
                 </div>
 
                 <div class="modal-body">
+                    <div class="modal-body">
 
-                    <form id="wasteOrder">
-
-                        <div class="modal-body">
-
-                            <div class="list-group-item">
-                                <div class="d-inline-flex col text-center">
-                                    <label for="ordersList">Zlecenie</label>
-                                    <select id="ordersList" style="margin-left: 20px; width: 200px; border-color: black; text-align-last: center" class="form-select" asp-items="@ViewBag.Orders">
-                                        <option value="-1" id="defaultOptionForProcess">Wybierz z listy</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <span>Receptura:</span>
-                                <input class="form-control" readonly id="wasteRecepture" />
-                            </div>
-                            <div class="form-group">
-                                <span>Ilość:</span>
-                                <input id="wasteCount" class="form-control" readonly />
-                            </div>
-                            <div class="form-group">
-                                <span>Ilość zrealizowanego zlecenia:</span>
-                                <input id="wasteTotalCount" class="form-control" required disabled />
-                            </div>
-
-                            <div class="form-group" id="surowce">
-                                <span>Zużycie surowców:</span>
-                                <table class="table table-bordered table-hover" id="tableWaste">
-                                    <thead>
-                                        <tr>
-                                            <th>Nr. materialu</th>
-                                            <th>Nazwa surowca</th>
-                                            <th>Ilość (planowane)</th>
-                                            <th>Ilość (po obliczenich)</th>
-                                            <th>Faktyczna ilość</th>
-                                            <th>Straty</th>
-                                            <th>Komentarze</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="wasteIngredients"></tbody>
-                                </table>
+                        <div class="list-group-item">
+                            <div class="d-inline-flex col text-center">
+                                <label for="ordersList">Zlecenie</label>
+                                <select id="reportOrdersList" style="margin-left: 20px; width: 200px; border-color: black; text-align-last: center" class="form-select" asp-items="@ViewBag.RelisedOrders">
+                                    <option value="-1" id="defaultOptionForReport">Wybierz z listy</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="form-group" id="" style="padding:5px">
-                            <div class="col text-center">
-                                <input type="submit" value="Zapisz" disabled id="submitForReport" class="btn btn-primary" />
-                            </div>
-                            <span id="warningTextForRaport" style="color:red; font-size:small; font-style:normal"></span>
+                        <div class="form-group">
+                            <span>Receptura:</span>
+                            <input class="form-control" readonly id="wasteReportRecepture" />
                         </div>
-                    </form>
+
+
+
+                        <div class="form-group">
+                            <span>Ilość zrealizowanego zlecenia:</span>
+                            <input id="wasteTotalCountReport" class="form-control" readonly />
+                        </div>
+                        <br />
+                        <div class="form-control" style="border:2px; border-color: black">
+                            <div class="form-group">
+                                <span class="spanDecor">Pasteryzacja przeprowadzona według receptury</span>
+                                <a class="btn btn-primary btn-sm color1 check" id="pasteryzacja" onclick="changeColor(this, 'input_0')">N/A</a>
+                                <br />
+                                <input class="form-control comment " placeholder="Proszę wpisać komentarz" id="input_0" hidden />
+                            </div>
+                            <br />
+                            <div class="form-group">
+                                <span class="spanDecor">Czy znaleziono w surowcach lub w gotowym produkcie ciała obce? Czy był poinformowany przełozony/dział jakości?</span>
+                                <a class="btn btn-primary btn-sm color1 check" id="ciałaObce" onclick="changeColor(this,'input_1')">N/A</a>
+                                <br />
+                                <input class="form-control comment" placeholder="Proszę wpisać komentarz" id="input_1" hidden />
+                            </div><br />
+                            <div class="form-group">
+                                <span class="spanDecor">Data umieszczona na opakowaniu odpowiada karcie produktu</span>
+                                <a class="btn btn-primary btn-sm color1 check" id="dataOpakowania" onclick="changeColor(this,'input_2')">N/A</a>
+                                <br />
+                                <input class="form-control comment" placeholder="Proszę wpisać komentarz" id="input_2" hidden />
+                            </div><br />
+                            <div class="form-group">
+                                <span class="spanDecor">Gotowy produkt jest zgony z recepturą?</span>
+                                <a class="btn btn-primary btn-sm color1 check" id="zgodnośćReceprura" onclick="changeColor(this, 'input_3')">N/A</a>
+                                <br />
+                                <input class="form-control comment" placeholder="Proszę wpisać komentarz" id="input_3" hidden />
+                            </div><br />
+                            <div class="form-group">
+                                <span class="spanDecor">Сzy był sprawdzony metaldetektor? Czy w ciągu zmiany wystepowały jakieś problemy z metaldetektorem?</span>
+                                <a class="btn btn-primary btn-sm color1 check" id="metaldetektor" onclick="changeColor(this,'input_4')">N/A</a>
+                                <br />
+                                <input class="form-control comment" placeholder="Proszę wpisać komentarz" id="input_4" hidden />
+                            </div><br />
+                            <div class="form-group">
+                                <span class="spanDecor">Opakowanie zgodne ze standardem?</span>
+                                <a class="btn btn-primary btn-sm color1 check" id="opakowanieReport" onclick="changeColor(this, 'input_5')">N/A</a>
+                                <br />
+                                <input class="form-control comment" placeholder="Proszę wpisać komentarz" id="input_5" hidden />
+                            </div><br />
+                            <div class="form-group" style="margin-top:10px">
+                                <span class="spanDecor" style="display: inline-block">Lepkość produktu</span>
+                                <input class="form-control inputQA" id="lepkość" required type="number" max="5000" style="display: inline-block" />
+                            </div>
+                            <div class="form-group" style="margin-top:10px">
+                                <span class="spanDecor" style="display: inline-block">Ekstrakt</span>
+                                <input class="form-control inputQA" id="ekstrakt" required type="number" max="100" style="display: inline-block" />
+                            </div>
+                            <div class="form-group" style="margin-top:10px">
+                                <span class="spanDecor" style="display: inline-block">Ph</span>
+                                <input class="form-control inputQA" id="ph" required type="number" max="20" style="display: inline-block" />
+                            </div>
+                            <div class="form-group">
+                                <span class="spanDecor" style="display: inline-block">Temperatura przed rozlewem</span>
+                                <input class="form-control inputQA" id="temperatura" required type="number" max="100" style="display: inline-block" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" id="" style="padding:5px">
+                        <div class="col text-center">
+                            <a id="pdfReporGenerator" style="margin-bottom: 10px; color: white" class="btn btn-primary">Generate PDF</a>
+                        </div>
+                        <span id="warningTextForRaport" style="color:red; font-size:small; font-style:normal"></span>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -363,14 +424,13 @@
                 <div class="modal-content" style="background-color: transparent;border:none">
 
                     <div class="modal-body" style="background-color: transparent">
-                        <p style="text-align: center; color: green; ">Copied</p>
+                        <p style="text-align: center; color: red; font-weight: bold" id="alertMessage">Proszę sprawdzić czy wszystkie pola są wypełnione!</p>
                     </div>
                 </div>
             </div>
 
         </div>
     </div>
-
 </footer>
 
 
@@ -401,6 +461,7 @@
             StaticDialog('#waste');
             StaticDialog('#details');
             StaticDialog('#report');
+            StaticDialog('#zlecenieUpdate');
 
             $('#closeNewZlecenie').click(function () {
                 document.getElementById('noweZlecenie').reset();
@@ -409,6 +470,8 @@
                 $('#warning').text("");
                 $('#warningCount').text('');
                 $('#submitButton').attr('disabled', 'true');
+                document.location.reload();
+
             });
 
             InputEvent();
@@ -477,8 +540,8 @@
                     $('#submitButton').attr('disabled', 'true');
                     $('#warningCount').text('Prosze sprawdzić ilość!')
                 }
-            })
-            document.getElementById('submitForWaste').addEventListener('click', function(){
+            });
+            document.getElementById('submitForWaste').addEventListener('click', function () {
                 var actualCount = [];
                 var jsonData = [];
                 var comments = [];
@@ -506,34 +569,39 @@
                     data['order'] = order;
                     data['recepture'] = recepture;
                     data['realisedCount'] = wasteTotalCount;
-                    
+
                     comments.push(comment);
                     actualCount.push(inputWaste);
-                    jsonData.push(data); 
+                    jsonData.push(data);
                 });
-                if ($('#wasteTotalCount').val() >= 2000 && CheckIfEquals(0, actualCount) == 0 && CheckIfEquals('', comments) == 0){
+                if ($('#wasteTotalCount').val() >= 2000 && CheckIfEquals(0, actualCount) == 0 && CheckIfEquals('', comments) == 0) {
                     $.ajax({
                         type: 'POST',
                         url: '@Url.Action("GetValues", "Home")',
                         dataType: 'json',
                         data: { 'jsonData': JSON.stringify(jsonData) },
                         success: function (data) {
-                               const Toast = Swal.mixin({
-                                    toast: true,
-                                    position: 'bottom-right',
-                                    iconColor: 'white',
-                                    customClass: {
-                                        popup: 'colored-toast'
-                                    },
-                                    showConfirmButton: false,
-                                    timer: 1500,
-                                    timerProgressBar: false
-                                })
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: 'Success'
-                                })
-                            
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: 'bottom-right',
+                                iconColor: 'white',
+                                customClass: {
+                                    popup: 'colored-toast'
+                                },
+                                showConfirmButton: false,
+                                timer: 1500,
+                                timerProgressBar: false
+                            })
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Success'
+                            });
+                            $('#waste').modal('hide');
+                            $('body').removeClass('modal-open');
+                            $('.modal-backdrop').remove();
+                            setTimeout(function(){
+                                ReloadPage();
+                            }, 1000);
                         },
                         error: function (error) {
                             console.log(JSON.stringify(error));
@@ -555,74 +623,110 @@
                         }
                     })
                     $('#waste').remove();
-                   /* setTimeout(function(){
-                        const Toast = Swal.mixin({
-                            toast: true,
-                            position: 'bottom-right',
-                            iconColor: 'white',
-                            customClass: {
-                                popup: 'colored-toast'
-                            },
-                            showConfirmButton: false,
-                            timer: 1000,
-                            timerProgressBar: false
-                        })
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Success'
-                        })
-                    }, 10); */
                 }
             })
             document.getElementById("ordersList").addEventListener("change", (event) => {
                 var id = event.target.value;
-                var body = document.getElementById('wasteIngredients');
-                body.innerHTML = "";
-                var tBody = "<tbody id='wasteIngredients'></tbody>";
-                setTimeout(function () {
-                $('#tableWaste').append(tBody);
-                }, 50);
+                var optionValue = event.target.options[event.target.selectedIndex].text;
                 $.ajax({
-                    type: 'Get',
-                    url: '/Home/Details',
-                    data: { 'id': id},
+                    type: 'GET',
+                    url: '@Url.Action("CheckIfRelised", "Home")',
+                    dataType: 'json',
+                    data: { 'ordersNumber': optionValue },
                     success: function (data) {
-                        $('#wasteOrder').val(data['details']['nrZlecenia']);
-                        $('#wasteRecepture').val(data['details']['recipesName']);
-                        $('#wasteCount').val(data['details']['count']);
-                        $('#wasteTotalCount').removeAttr('disabled');
+                        var body = document.getElementById('wasteIngredients');
+                        body.innerHTML = "";
+                        var tBody = "<tbody id='wasteIngredients'></tbody>";
+                        setTimeout(function () {
+                            $('#tableWaste').append(tBody);
+                        }, 50);
+                        if (data['check'] != true) {
+                            $.ajax({
+                                type: 'Get',
+                                url: '/Home/Details',
+                                data: { 'id': id },
+                                success: function (data) {
+                                    $('#wasteOrder').val(data['details']['nrZlecenia']);
+                                    $('#wasteRecepture').val(data['details']['recipesName']);
+                                    $('#wasteCount').val(data['details']['count']);
+                                    $('#wasteTotalCount').removeAttr('disabled');
+                                    $('#wasteTotalCount').val('');
 
-                        $.each(data['opakowania'], function (index, value) {
-                            $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick = 'Copy($(this))' > " + data['opakowania'][index]['materialNumber'] + " </td><td class='wasteRow'>" + data['opakowania'][index]['name'] +
-                                "</td><td class='wasteRow'>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td><td class='wasteRow actualWastePack' id='actualWaste'></td><td><input class='form-control' required id='wasteDefault' oninput='GetValue($(this))'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input class='form-control' required id='comment' value=''  hidden/></td></tr>");
-                        })
-                        $.each(data['items'], function (index, value) {
-                            if (data['items'][index]['item1'] != 0) {
-                                $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick='Copy($(this))'>" + data['items'][index]['item1'] + "</td><td class='wasteRow'>" + data['items'][index]['item2'] +
-                                    "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td><td class='wasteRow actualWaste' id='actualWaste'></td><td><input class='form-control' required oninput='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input required class='form-control' id='comment' value=''  hidden/></td></tr>");
-                            } else {
-                                $('#wasteIngredients').append("<tr><td class='wasteRow'>" + '-' + "</td><td class='wasteRow '>" + data['items'][index]['item2'] + "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow actualWaste' id='actualWaste'></td><td class='wasteRow'><input class='form-control' required  oninput='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input class='form-control' required id='comment' value='' hidden/></td></tr>");
-                            }
-                        })
+                                    $('#wasteIngredients').empty();
+                                    $('#mainTR').remove();
+                                    var trElement = $('<tr id="mainTR"><th>Nr.materialu </th><th> Nazwa surowca </th><th> Ilość(planowane) </th><th> Ilość(po obliczenich) </th><th> Faktyczna ilość </th><th> Straty </th><th> Komentarze </th></tr>');
+                                    $('#tableWaste thead').append(trElement);
+
+                                    $.each(data['opakowania'], function (index, value) {
+                                        $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick = 'Copy($(this))' > " + data['opakowania'][index]['materialNumber'] + " </td><td class='wasteRow'>" + data['opakowania'][index]['name'] +
+                                            "</td><td class='wasteRow'>" + data['details']['ilośćOpakowań'] + ' szt. ' + "</td><td class='wasteRow actualWastePack' id='actualWaste'></td><td><input class='form-control' required id='wasteDefault' oninput='GetValue($(this))'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input class='form-control' required id='comment' maxlength='50' value=''  hidden/></td></tr>");
+                                    })
+                                    $.each(data['items'], function (index, value) {
+                                        if (data['items'][index]['item1'] != 0) {
+                                            $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick='Copy($(this))'>" + data['items'][index]['item1'] + "</td><td class='wasteRow'>" + data['items'][index]['item2'] +
+                                                "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td><td class='wasteRow actualWaste' id='actualWaste'></td><td><input class='form-control' required oninput='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input required class='form-control' maxlength='50' id='comment' value=''  hidden/></td></tr>");
+                                        } else {
+                                            $('#wasteIngredients').append("<tr><td class='wasteRow'>" + '-' + "</td><td class='wasteRow '>" + data['items'][index]['item2'] + "</td><td class='wasteRow'>" + data['items'][index]['item3'] + ' kg ' + "</td></td><td class='wasteRow actualWaste' id='actualWaste'></td><td class='wasteRow'><input class='form-control' required  oninput='GetValue($(this))' id='wasteDefault'/></td><td class='wasteRow' id='wasteAfterInput'></td><td class='wasteRow'><input class='form-control' required id='comment' maxlength='50' value='' hidden/></td></tr>");
+                                        }
+                                    })
+                                }
+                            })
+                        }
+                        else {
+                            $('#submitForWaste').attr('disabled', 'true');
+                            $.ajax({
+                                type: 'GET',
+                                url: '@Url.Action("ReturnRelisedOrder", "Home")',
+                                dataType: 'json',
+                                data: { 'ordersNumber': optionValue },
+                                success: function (data) {
+                                    $('#wasteTotalCount').attr('disabled', 'true');
+                                    $('#wasteTotalCount').val(data['relisedOrder']['count']);
+                                    $('#wasteCount').val(data['relisedOrder']['count']);
+                                    $('#wasteRecepture').val(data['relisedOrder']['recipeName']);
+                                    $('#wasteIngredients').empty();
+                                    $('#mainTR').remove();
+
+                                    var trElement = $('<tr id="mainTR"><th>Nr.materialu </th><th> Nazwa surowca </th><th> Faktyczna ilość </th><th> Straty </th><th> Komentarze </th></tr>')
+                                    $('#tableWaste thead').append(trElement);
+                                    $.each(data['listOfWastePack'], function (index, value) {
+                                        $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick = 'Copy($(this))' > " + data['listOfWastePack'][index]['item1'] + " </td><td class='wasteRow'>" + data['listOfWastePack'][index]['item2'] +
+                                            "</td><td class='wasteRow wasteCount' >" + data['listOfWastePack'][index]['item3'] + ' szt.' + "</td><td class='wasteRow actualWastePack' id='actualWaste'>" + data['listOfWastePack'][index]['item4'] + "</td><td>" + data['listOfWastePack'][index]['item5'] + "</td></tr>");
+                                    })
+                                    $.each(data['listOfWasteIngredients'], function (index, value) {
+                                        $('#wasteIngredients').append("<tr><td class='wasteRow' id='matNumber_" + index + "' onclick = 'Copy($(this))' > " + data['listOfWasteIngredients'][index]['item1'] + " </td><td class='wasteRow'>" + data['listOfWasteIngredients'][index]['item2'] +
+                                            "</td><td class='wasteRow wasteCount'>" + data['listOfWasteIngredients'][index]['item3'] + ' kg' + "</td><td class='wasteRow actualWastePack' id='actualWaste'>" + data['listOfWasteIngredients'][index]['item4'] + "</td><td>" + data['listOfWasteIngredients'][index]['item5'] + "</td></tr>");
+                                    })
+
+                                },
+                                error: function (error) {
+                                    console.log(JSON.stringify(error));
+                                }
+                            })
+
+                        }
+                    },
+                    error: function (error) {
+                        console.log(JSON.stringify(error));
                     }
-                })
+                });
             });
-            document.getElementById('wasteTotalCount').addEventListener('input', function(event){
+            document.getElementById('wasteTotalCount').addEventListener('input', function (event) {
                 var countTotal = event.target.value;
                 var id = $('#wasteOrder option:selected').val();
                 $.ajax({
-                    type:'Get',
+                    type: 'Get',
                     url: '/Home/Details',
                     data: { 'id': id },
-                    success: function(data){
+                    success: function (data) {
                         var n = 0;
                         var count = [];
                         var counPack = [];
-                         $.each(data['items'], function (index, value) {
+                        $.each(data['items'], function (index, value) {
                             var ingredient = FindPercentage(countTotal, document.getElementById('wasteCount').value, parseFloat(data['items'][index]['item3']));
                             count.push(ingredient)
-                         })
-                            
+                        })
+
                         $('#tableWaste tbody tr').each(function (tr_idx, tr) {
                             $(tr).children('td.actualWastePack').each(function (td_idx, td) {
                                 $.each(data['opakowania'], function (index, value) {
@@ -637,40 +741,261 @@
                             });
                         });
                         ChangeTAfterDelete(countTotal);
-                        if (countTotal > 0){
+                        if (countTotal > 0) {
                             $('#submitForWaste').removeAttr('disabled');
-                        }else{
+                        } else {
                             $('#submitForWaste').attr('disabled', 'true');
                         }
                     }
                 })
             })
-        })
-        /* function CheckIfEmpty(){
-            var tableTrElem = $('#tableWaste tbody tr');
-            var elem = [];
-            tableTrElem.each(function(){
-                var inputWaste = $(this).find('td').eq(4).find('input').val();
-                var comment = $(this).find('td').eq(6).find('input').val();
+            document.getElementById('reportOrdersList').addEventListener('change', function (event) {
+                var optionValue = event.target.options[event.target.selectedIndex].text;
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Action("CheckIfRelised", "Home")',
+                    dataType: 'json',
+                    data: { 'ordersNumber': optionValue },
+                    success: function (data) {
+                        if (data['check'] == true) {
+                            $('#wasteReportRecepture').val(data['recipe']);
+                            $('#wasteTotalCountReport').val(data['relisedCount']);
+                        } else {
+                            $('#wasteReportRecepture').val('');
+                            $('#wasteTotalCountReport').val('');
+                        }
+                    },
+                    error: function (error) {
+                        console.log(JSON.stringify(error));
+                    }
+                });
 
             })
-        } */
-        function CheckIfEquals(elem, arrValues){
+            document.getElementById('pdfReporGenerator').addEventListener('click', function () {
+                var pasteryzacja = BoolCheck('pasteryzacja');
+                var ciałaObce = BoolCheck('ciałaObce');
+                var data = BoolCheck('dataOpakowania');
+                var zgodnośćReceptura = BoolCheck('zgodnośćReceprura');
+                var metaldetektor = BoolCheck('metaldetektor');
+                var opakowanie = BoolCheck('opakowanieReport');
+
+                var pasteryzacjaKomment = GetComment('input_0');
+                var ciałaObceKomment = GetComment('input_1');
+                var dataKomment = GetComment('input_2');
+                var zgodnośćRecepturaKomment = GetComment('input_3');
+                var metaldetektorKomment = GetComment('input_4');
+                var opakowanieKomment = GetComment('input_5');
+
+                var lepkość = GetComment('lepkość');
+                var ekstrakt = GetComment('ekstrakt');
+                var ph = GetComment('ph');
+                var temperatura = GetComment('temperatura');
+
+                var qaResult = {
+                    Pasteryzacja: pasteryzacja,
+                    PasteryzacjaKomentarz: pasteryzacjaKomment,
+
+                    CiałaObce: ciałaObce,
+                    CiałaObceKomentarz: ciałaObceKomment,
+
+                    DataOpakowania: data,
+                    DataOpakowaniaKomentarz: dataKomment,
+
+                    Receptura: zgodnośćReceptura,
+                    RecepturaKomentarz: zgodnośćRecepturaKomment,
+
+                    MetalDetektor: metaldetektor,
+                    MetalDetektorKomentarz: metaldetektorKomment,
+
+                    Opakowanie: opakowanie,
+                    OpakowanieKomentarz: opakowanieKomment,
+
+                    Lepkość: lepkość,
+                    Ekstrakt: ekstrakt,
+                    Ph: ph,
+                    Temperatura: temperatura
+                };
+
+                var relisedOrder = $('#reportOrdersList option:selected');
+
+                if (CheckIfEmptyComment() === false && relisedOrder.val() !== '-1' && CheckQA() === false) {
+                    fetch(`/Home/GeneretaPdfFile?check=${JSON.stringify(qaResult)}&relisedOrder=${JSON.stringify(relisedOrder)}`)
+                        .then(function (response) {
+                            response.text();
+                            document.location.reload();
+
+                        })
+                        .then(html => {
+                            window.open(`/Home/GeneretaPdfFile?check=${JSON.stringify(qaResult)}&relisedOrder=${relisedOrder.text()}`);
+                        })
+                        .catch(error => console.error('Error:', error));
+                }
+                else {
+                    ShowAlertBox();
+                }
+
+
+            });
+        })
+        function BoolCheck(id) {
+            var input = document.getElementById(id);
+            if (input.innerText === "OK") {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        function GetComment(id) {
+            var input = document.getElementById(id);
+
+            return input.value;
+        }
+        function CheckQA() {
+            var inputs = document.getElementsByClassName('inputQA');
+            var empty = false;
+
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].value === '') {
+                    empty = true;
+                    break;
+                }
+            }
+            return empty;
+        }
+        function ReloadPage() {
+            document.location.reload();
+        }
+        function CheckIfEmptyComment() {
+            var inputs = document.querySelectorAll(".comment:not([hidden])");
+            var isEmpty = false;
+
+            for (var i = 0; i < inputs.length; i++) {
+                if (inputs[i].value === "") {
+                    isEmpty = true;
+                    break;
+                }
+            }
+            return isEmpty;
+        }
+        function ShowAlert() {
+            $('#alertModal').modal('show');
+            setTimeout(function () {
+                $('#alertModal').modal('hide');
+            }, 1000);
+        }
+        function CheckFormByComment() {
+            var buttons = document.getElementsByClassName("check");
+            var submitButton = document.getElementById("submitForReport");
+            var comments = document.getElementsByClassName("comment");
+            var allClicked = false;
+
+            for (var i = 0; i < buttons.length; i++) {
+                var button = buttons[i];
+                var value = button.innerText;
+
+                if (value === "N/A") {
+                    allClicked = true;
+                    break;
+                }
+            }
+
+            submitButton.disabled = allClicked;
+        }
+
+        function CheckForm() {
+            var buttons = document.getElementsByClassName("color1");
+            var submitButton = document.getElementById("submitForReport");
+
+            var allClicked = true;
+
+            for (var i = 0; i < buttons.length; i++) {
+                var button = buttons[i];
+                var value = button.innerText;
+                var commentField = document.getElementById("input_" + [i]);
+
+                if (value !== "OK" && value !== "NOK") {
+                    allClicked = false;
+                    break;
+                }
+
+                if (value === "NOK" && commentField.value === "") {
+                    allClicked = false;
+                    break;
+                }
+            }
+
+            submitButton.disabled = !allClicked;
+        }
+        function Reporting(button, input, qaValue, commentValue) {
+            var buttonsValue = document.getElementById(button).textContent;
+            var comment = document.getElementById(input);
+            var data = {};
+            var listResult = [];
+
+            if (comment.hasAttribute('hidden')) {
+                data[qaValue] = buttonsValue;
+                listResult.push(data);
+
+                return listResult;
+            }
+            else {
+                data[qaValue] = buttonsValue;
+                data[commentValue] = comment.value;
+                listResult.push(data);
+
+                return listResult;
+            }
+        }
+        function changeColor(button, commentNok) {
+
+            switch (true) {
+                case button.classList.contains("color1"):
+                    button.classList.remove("color1");
+                    button.classList.add("color2");
+                    button.classList.add('clicked');
+                    button.text = "OK";
+                    $('#' + commentNok).attr('hidden', 'true');
+                    $('#' + commentNok).removeAttr('required');
+                    CheckFormByComment();
+                    break;
+                case button.classList.contains("color2"):
+                    button.classList.remove("color2");
+                    button.classList.add("color3");
+                    button.classList.add('clicked');
+                    button.text = "NOK";
+                    $('#' + commentNok).removeAttr('hidden');
+                    $('#' + commentNok).attr('required', 'true');
+                    CheckFormByComment();
+                    break;
+                case button.classList.contains("color3"):
+                    button.classList.remove("color3");
+                    button.classList.add("color1");
+                    button.classList.add('clicked');
+                    button.text = "N/A";
+                    $('#' + commentNok).attr('hidden', 'true');
+                    $('#' + commentNok).removeAttr('required');
+                    CheckFormByComment();
+                    break;
+            }
+
+        }
+        function CheckIfEquals(elem, arrValues) {
             if ($.inArray(elem, arrValues) != -1) {
                 return 1;
             } else {
                 return 0;
             }
         }
-        function ShowDialog(elem, dialog){
+        function ShowDialog(elem, dialog) {
             $(elem).on('click', function () {
                 $(dialog).modal('show');
             });
         }
-        function StaticDialog(elem){
+        function StaticDialog(elem) {
             $(elem).modal({ backdrop: 'static', keyboard: false });
         }
-        function ChangeTAfterDelete(input){
+        function ChangeTAfterDelete(input) {
             var $table = $('#tableWaste tbody');
             var $trElements = $table.find('tr');
 
@@ -679,11 +1004,11 @@
                 var inputWaste = $(this).find('td').eq(4).find('input');
                 var waste = $(this).find('td').eq(5);
                 var comment = $(this).find('td').eq(6).find('input');
-                if(inputWaste.val() != 0 && input != 0){
+                if (inputWaste.val() != 0 && input != 0) {
                     var value = (100 - ((parseFloat(inputWaste.val()) / parseFloat(count)) * 100)).toFixed(2);
                     switch (true) {
                         case value < 0:
-                           waste.css('color', 'red').text(value + ' %');
+                            waste.css('color', 'red').text(value + ' %');
                             if (value < -1) {
                                 comment.removeAttr("hidden");
                                 comment.val('');
@@ -708,24 +1033,23 @@
                             comment.attr('hidden', 'true');
                             break;
                     }
-                   // waste.text(value);
-                }else{
+                } else {
                     waste.css('color', 'black').text('');
                     inputWaste.val('');
-                   comment.attr('hidden', 'true');
+                    comment.attr('hidden', 'true');
 
-                } 
+                }
             });
         }
-        function GetValue(input){
+        function GetValue(input) {
             const tr = input.parent().parent().index();
             var count = $('#tableWaste tbody tr').eq(tr).find('td').eq(3).text();
             var comment = $('#tableWaste tbody tr').eq(tr).find('td').eq(6).find('input');
             var value = (100 - ((parseFloat(input.val()) / parseFloat(count)) * 100)).toFixed(2);
-            if(input.val() == ''){
+            if (input.val() == '') {
                 $('#tableWaste tbody tr').eq(tr).find('td').eq(5).text('');
                 comment.attr('hidden', 'true');
-            }else{
+            } else {
                 switch (true) {
                     case value < 0:
                         $('#tableWaste tbody tr').eq(tr).find('td').eq(5).css('color', 'red').text(value + ' %');
@@ -758,8 +1082,8 @@
         function Check(id) {
             return $(id + ' option:selected').val() != -1;
         }
-        function GetDataFromColumn(column, list){
-            $("#tableWaste tbody tr td:nth-child("+column+")").each(function () {
+        function GetDataFromColumn(column, list) {
+            $("#tableWaste tbody tr td:nth-child(" + column + ")").each(function () {
                 var value = $(this).text();
                 list.push(value);
             });
@@ -776,7 +1100,7 @@
                         dataType: 'json',
                         data: { 'numerZlecenia': inputValue },
                         success: function (data) {
-                            if (data['result'] == true) {
+                            if (data['resultForOrders'] == true || data['resultForRelised'] == true) {
                                 $('#warning').text("Zlecenie zrealizowane albo taki numer zlecenia już istnieje!")
                                 $('#submitButton').attr('disabled', 'true');
                             }
@@ -830,7 +1154,7 @@
                 $('#warningTextForOrder').text('Prosze dokładnie sprawdzić czy wszystkie opcje są wybrane!');
             }
         }
-        function FindPercentage(number_1, number_2, number_3){
+        function FindPercentage(number_1, number_2, number_3) {
             var percent = (number_1 / number_2) * 100;
             var count = (percent / 100) * number_3;
             return count;
@@ -921,6 +1245,13 @@
                 input.value = value - 1;
             }
         }
+
+        function ShowAlertBox() {
+            $('#alertModal').modal('show');
+            setTimeout(function () {
+                $('#alertModal').modal('hide');
+            }, 2000);
+        }
         function Details(id) {
             $.ajax({
                 type: 'Get',
@@ -943,18 +1274,11 @@
                             $('#numerMaterialu').append("<tr><td>" + '-' + "</td><td>" + data['items'][index]['item2'] + "</td><td>" + data['items'][index]['item3'] + ' kg ' + "</td></tr>");
                         }
                     })
-                    
+
                 }
             })
         }
-        function Copy(input) {
-            var result = input.select();
-            navigator.clipboard.writeText(result.text());
-            $('#alertModal').modal('show');
-            setTimeout(function () {
-                $('#alertModal').modal('hide');
-            }, 1000);
-        }
+
         function Delete(id) {
             Swal.fire({
                 title: 'Delete this order?',

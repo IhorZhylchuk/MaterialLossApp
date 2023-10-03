@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "gLF5FpXIhtcY5TZ4Ys5kawQRNINFx+02Wag7OS1iHB+lbSqKikUfSv70hPCiZzPIxw33sIly3Mk//V9Z/++hAA==",
+  "dgSpecHash": "PkkPtcBVqxMJeHojDpHvhrqcLeYr3HHUdqBIbFTVY7ZiGv+gQYcJfYXHaGWK8RH4/GdPdvaYcjK9AUB/Q6nLKw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\MaterialLossApp.csproj",
   "expectedPackageFiles": [
@@ -51,6 +51,9 @@
     "C:\\Users\\Igor\\.nuget\\packages\\microsoft.win32.systemevents\\5.0.0\\microsoft.win32.systemevents.5.0.0.nupkg.sha512",
     "C:\\Users\\Igor\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
     "C:\\Users\\Igor\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\Igor\\.nuget\\packages\\syncfusion.compression.net.core\\22.2.12\\syncfusion.compression.net.core.22.2.12.nupkg.sha512",
+    "C:\\Users\\Igor\\.nuget\\packages\\syncfusion.licensing\\22.2.12\\syncfusion.licensing.22.2.12.nupkg.sha512",
+    "C:\\Users\\Igor\\.nuget\\packages\\syncfusion.pdf.net.core\\22.2.12\\syncfusion.pdf.net.core.22.2.12.nupkg.sha512",
     "C:\\Users\\Igor\\.nuget\\packages\\system.buffers\\4.5.1\\system.buffers.4.5.1.nupkg.sha512",
     "C:\\Users\\Igor\\.nuget\\packages\\system.codedom\\4.4.0\\system.codedom.4.4.0.nupkg.sha512",
     "C:\\Users\\Igor\\.nuget\\packages\\system.configuration.configurationmanager\\5.0.0\\system.configuration.configurationmanager.5.0.0.nupkg.sha512",

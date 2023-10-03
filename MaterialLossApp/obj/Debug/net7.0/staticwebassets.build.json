@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "D042xCtirB8JnY4n57HajONdm4SSL+aZh/j6jT/SVHg=",
+  "Hash": "2j5CevP6NvzfrKaCbsdxAvqcaag2goqqD4OktSaA1N8=",
   "Source": "MaterialLossApp",
   "BasePath": "_content/MaterialLossApp",
   "Mode": "Default",
@@ -83,6 +83,40 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\Font\\Arial.ttf",
+      "SourceId": "MaterialLossApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\",
+      "BasePath": "_content/MaterialLossApp",
+      "RelativePath": "Font/Arial.ttf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Font\\Arial.ttf"
+    },
+    {
+      "Identity": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\Font\\Helvetica.ttf",
+      "SourceId": "MaterialLossApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\",
+      "BasePath": "_content/MaterialLossApp",
+      "RelativePath": "Font/Helvetica.ttf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Font\\Helvetica.ttf"
     },
     {
       "Identity": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\js\\site.js",
@@ -1069,6 +1103,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Identity": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\logo.png",
+      "SourceId": "MaterialLossApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Igor\\source\\repos\\MaterialLossApp\\MaterialLossApp\\wwwroot\\",
+      "BasePath": "_content/MaterialLossApp",
+      "RelativePath": "logo.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\logo.png"
     }
   ]
 }

@@ -41,6 +41,9 @@ C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Micr
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Mono.TextTemplating.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Newtonsoft.Json.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Syncfusion.Compression.Portable.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Syncfusion.Licensing.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\Syncfusion.Pdf.Portable.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.CodeDom.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.Configuration.ConfigurationManager.dll
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\System.Drawing.Common.dll
@@ -86,3 +89,4 @@ C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\obj\Debug\net7.0\refi
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\obj\Debug\net7.0\MaterialLossApp.pdb
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\obj\Debug\net7.0\MaterialLossApp.genruntimeconfig.cache
 C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\obj\Debug\net7.0\ref\MaterialLossApp.dll
+C:\Users\Igor\source\repos\MaterialLossApp\MaterialLossApp\bin\Debug\net7.0\libman.json
