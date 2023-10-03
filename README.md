@@ -19,7 +19,7 @@ Navigate to the project directory and restore dependencies:
 Open the project in IDE, in <b>```appsettings.json```</b> enter your server name, run the following commands:<br/>
 <b>```add-migration MIGRATION_NAME```</b> then run <br/>
 <b>```update-database```</b><br/>
-[This video is a demonstration of how an application works.]([https://youtu.be/c3QdAG8lOrQ](https://youtu.be/YS2lyf5bEGI))
+[This video is a demonstration of how an application works.](https://youtu.be/YS2lyf5bEGI)
 
 <b>1. Creating ```Orders```</b><br/>
 <br/>
